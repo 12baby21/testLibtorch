@@ -39,7 +39,8 @@ public:
   static torch::Tensor calGrad(torch::Tensor diff, torch::Tensor input)
   {
     torch::Tensor gradWeight = torch::zeros_like(input[0]);
-    gradWeight = torch::mm(diff, input);
+    gradWeight = torch::mm(diff, input);    // 1 row 784 columns
+    gradWeight = (-1.0) / (input.sizes())[0] * gradWeight;
   }
 
 };
