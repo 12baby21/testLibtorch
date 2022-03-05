@@ -4,7 +4,6 @@
 using namespace std;
 using namespace torch::autograd;
 
-
 // Define a new Module.
 class Net : public torch::nn::Module
 {
@@ -27,38 +26,22 @@ public:
   torch::nn::Linear fc1{nullptr};
 };
 
+class myBackward
+{
+private:
+  torch::Tensor diff;
+  torch::Tensor input;
 
-
-// Inherit from Function
-class myLinear : public Function<myLinear> {
- public:
-  // bias is an optional argument
-  static torch::Tensor forward(
-      AutogradContext *ctx, torch::Tensor input, torch::Tensor weight, torch::Tensor bias = torch::Tensor()) {
-    ctx->save_for_backward({input, weight, bias});
-    auto output = input.mm(weight.t());
-    if (bias.defined()) {
-      output += bias.unsqueeze(0).expand_as(output);
-    }
-    return output;
+public:
+  myBackward(torch::Tensor diff, torch::Tensor x) // diff = y - ^y
+      :diff(diff), input(x)  { }
+  ~myBackward() = default;
+  static torch::Tensor calGrad(torch::Tensor diff, torch::Tensor input)
+  {
+    torch::Tensor gradWeight = torch::zeros_like(input[0]);
+    gradWeight = torch::mm(diff, input);
   }
 
-  static tensor_list backward(AutogradContext *ctx, tensor_list grad_outputs) {
-    auto saved = ctx->get_saved_variables();
-    auto input = saved[0];
-    auto weight = saved[1];
-    auto bias = saved[2];
-
-    auto grad_output = grad_outputs[0];
-    auto grad_input = grad_output.mm(weight);
-    auto grad_weight = grad_output.t().mm(input);
-    auto grad_bias = torch::Tensor();
-    if (bias.defined()) {
-      grad_bias = grad_output.sum(0);
-    }
-
-    return {grad_input, grad_weight, grad_bias};
-  }
 };
 
 int main()
@@ -93,17 +76,17 @@ int main()
       newPrediction.detach();
 
       // Compute a loss value to judge the prediction of our model.
-/**
-      torch::Tensor lossA = torch::cross_entropy_loss(predictionA, batch.target);
-      torch::Tensor lossB = torch::cross_entropy_loss(predictionB, batch.target);
-**/
+      /**
+            torch::Tensor lossA = torch::cross_entropy_loss(predictionA, batch.target);
+            torch::Tensor lossB = torch::cross_entropy_loss(predictionB, batch.target);
+      **/
       torch::Tensor loss = torch::cross_entropy_loss(newPrediction, batch.target);
 
       // Compute gradients of the loss w.r.t. the parameters of our model.
-/**
-      lossA.backward();
-      lossB.backward();
-**/
+      /**
+            lossA.backward();
+            lossB.backward();
+      **/
       loss.backward();
 
       // Update the parameters based on the calculated gradients.
