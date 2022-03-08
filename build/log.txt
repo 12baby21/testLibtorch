@@ -1,0 +1,300 @@
+Epoch: 1 | Batch: 10000 | Loss: 0.653703
+predict:  0.5174  0.4369
+[ CPUFloatType{1,2} ]
+label:  0
+[ CPULongType{1} ]
+Epoch: 1 | Batch: 20000 | Loss: 0.651226
+predict:  0.5122  0.4265
+[ CPUFloatType{1,2} ]
+label:  0
+[ CPULongType{1} ]
+Epoch: 1 | Batch: 30000 | Loss: 0.699871
+predict:  0.5071  0.5205
+[ CPUFloatType{1,2} ]
+label:  0
+[ CPULongType{1} ]
+Epoch: 1 | Batch: 40000 | Loss: 0.659896
+predict:  0.5023  0.4347
+[ CPUFloatType{1,2} ]
+label:  0
+[ CPULongType{1} ]
+Epoch: 1 | Batch: 50000 | Loss: 0.678697
+predict:  0.4923  0.5214
+[ CPUFloatType{1,2} ]
+label:  1
+[ CPULongType{1} ]
+Epoch: 1 | Batch: 60000 | Loss: 0.674755
+predict:  0.5131  0.5503
+[ CPUFloatType{1,2} ]
+label:  1
+[ CPULongType{1} ]
+Epoch: 2 | Batch: 10000 | Loss: 0.647545
+predict:  0.5375  0.4441
+[ CPUFloatType{1,2} ]
+label:  0
+[ CPULongType{1} ]
+Epoch: 2 | Batch: 20000 | Loss: 0.663302
+predict:  0.4964  0.4358
+[ CPUFloatType{1,2} ]
+label:  0
+[ CPULongType{1} ]
+Epoch: 2 | Batch: 30000 | Loss: 0.679381
+predict:  0.5134  0.5411
+[ CPUFloatType{1,2} ]
+label:  1
+[ CPULongType{1} ]
+Epoch: 2 | Batch: 40000 | Loss: 0.700406
+predict:  0.5297  0.5152
+[ CPUFloatType{1,2} ]
+label:  1
+[ CPULongType{1} ]
+Epoch: 2 | Batch: 50000 | Loss: 0.710336
+predict:  0.5228  0.5569
+[ CPUFloatType{1,2} ]
+label:  0
+[ CPULongType{1} ]
+Epoch: 2 | Batch: 60000 | Loss: 0.678534
+predict:  0.4892  0.5186
+[ CPUFloatType{1,2} ]
+label:  1
+[ CPULongType{1} ]
+Epoch: 3 | Batch: 10000 | Loss: 0.659692
+predict:  0.5446  0.4765
+[ CPUFloatType{1,2} ]
+label:  0
+[ CPULongType{1} ]
+Epoch: 3 | Batch: 20000 | Loss: 0.69364
+predict:  0.5228  0.5218
+[ CPUFloatType{1,2} ]
+label:  1
+[ CPULongType{1} ]
+Epoch: 3 | Batch: 30000 | Loss: 0.691462
+predict:  0.4341  0.4307
+[ CPUFloatType{1,2} ]
+label:  0
+[ CPULongType{1} ]
+Epoch: 3 | Batch: 40000 | Loss: 0.696707
+predict:  0.4545  0.4474
+[ CPUFloatType{1,2} ]
+label:  1
+[ CPULongType{1} ]
+Epoch: 3 | Batch: 50000 | Loss: 0.683624
+predict:  0.5337  0.5145
+[ CPUFloatType{1,2} ]
+label:  0
+[ CPULongType{1} ]
+Epoch: 3 | Batch: 60000 | Loss: 0.685364
+predict:  0.5411  0.5255
+[ CPUFloatType{1,2} ]
+label:  0
+[ CPULongType{1} ]
+Epoch: 4 | Batch: 10000 | Loss: 0.674523
+predict:  0.5441  0.5817
+[ CPUFloatType{1,2} ]
+label:  1
+[ CPULongType{1} ]
+Epoch: 4 | Batch: 20000 | Loss: 0.710696
+predict:  0.5505  0.5157
+[ CPUFloatType{1,2} ]
+label:  1
+[ CPULongType{1} ]
+Epoch: 4 | Batch: 30000 | Loss: 0.709315
+predict:  0.5420  0.5100
+[ CPUFloatType{1,2} ]
+label:  1
+[ CPULongType{1} ]
+Epoch: 4 | Batch: 40000 | Loss: 0.675598
+predict:  0.5379  0.5024
+[ CPUFloatType{1,2} ]
+label:  0
+[ CPULongType{1} ]
+Epoch: 4 | Batch: 50000 | Loss: 0.683461
+predict:  0.4365  0.4170
+[ CPUFloatType{1,2} ]
+label:  0
+[ CPULongType{1} ]
+Epoch: 4 | Batch: 60000 | Loss: 0.704673
+predict:  0.4420  0.4649
+[ CPUFloatType{1,2} ]
+label:  0
+[ CPULongType{1} ]
+Epoch: 5 | Batch: 10000 | Loss: 0.703221
+predict:  0.5264  0.5464
+[ CPUFloatType{1,2} ]
+label:  0
+[ CPULongType{1} ]
+Epoch: 5 | Batch: 20000 | Loss: 0.735451
+predict:  0.5122  0.5951
+[ CPUFloatType{1,2} ]
+label:  0
+[ CPULongType{1} ]
+Epoch: 5 | Batch: 30000 | Loss: 0.703046
+predict:  0.5678  0.5481
+[ CPUFloatType{1,2} ]
+label:  1
+[ CPULongType{1} ]
+Epoch: 5 | Batch: 40000 | Loss: 0.692887
+predict:  0.5119  0.5113
+[ CPUFloatType{1,2} ]
+label:  0
+[ CPULongType{1} ]
+Epoch: 5 | Batch: 50000 | Loss: 0.706677
+predict:  0.5178  0.4909
+[ CPUFloatType{1,2} ]
+label:  1
+[ CPULongType{1} ]
+Epoch: 5 | Batch: 60000 | Loss: 0.69394
+predict:  0.5389  0.5373
+[ CPUFloatType{1,2} ]
+label:  1
+[ CPULongType{1} ]
+Epoch: 6 | Batch: 10000 | Loss: 0.702889
+predict:  0.5537  0.5343
+[ CPUFloatType{1,2} ]
+label:  1
+[ CPULongType{1} ]
+Epoch: 6 | Batch: 20000 | Loss: 0.697454
+predict:  0.5243  0.5157
+[ CPUFloatType{1,2} ]
+label:  1
+[ CPULongType{1} ]
+Epoch: 6 | Batch: 30000 | Loss: 0.652227
+predict:  0.5361  0.4525
+[ CPUFloatType{1,2} ]
+label:  0
+[ CPULongType{1} ]
+Epoch: 6 | Batch: 40000 | Loss: 0.662571
+predict:  0.5263  0.4642
+[ CPUFloatType{1,2} ]
+label:  0
+[ CPULongType{1} ]
+Epoch: 6 | Batch: 50000 | Loss: 0.689821
+predict:  0.5210  0.5277
+[ CPUFloatType{1,2} ]
+label:  1
+[ CPULongType{1} ]
+Epoch: 6 | Batch: 60000 | Loss: 0.658053
+predict:  0.4694  0.5409
+[ CPUFloatType{1,2} ]
+label:  1
+[ CPULongType{1} ]
+Epoch: 7 | Batch: 10000 | Loss: 0.698788
+predict:  0.5152  0.5264
+[ CPUFloatType{1,2} ]
+label:  0
+[ CPULongType{1} ]
+Epoch: 7 | Batch: 20000 | Loss: 0.725492
+predict:  0.4562  0.5199
+[ CPUFloatType{1,2} ]
+label:  0
+[ CPULongType{1} ]
+Epoch: 7 | Batch: 30000 | Loss: 0.676563
+predict:  0.4898  0.5233
+[ CPUFloatType{1,2} ]
+label:  1
+[ CPULongType{1} ]
+Epoch: 7 | Batch: 40000 | Loss: 0.631801
+predict:  0.5478  0.4211
+[ CPUFloatType{1,2} ]
+label:  0
+[ CPULongType{1} ]
+Epoch: 7 | Batch: 50000 | Loss: 0.693353
+predict:  0.5131  0.5135
+[ CPUFloatType{1,2} ]
+label:  0
+[ CPULongType{1} ]
+Epoch: 7 | Batch: 60000 | Loss: 0.672903
+predict:  0.4665  0.5074
+[ CPUFloatType{1,2} ]
+label:  1
+[ CPULongType{1} ]
+Epoch: 8 | Batch: 10000 | Loss: 0.643455
+predict:  0.4392  0.5412
+[ CPUFloatType{1,2} ]
+label:  1
+[ CPULongType{1} ]
+Epoch: 8 | Batch: 20000 | Loss: 0.671604
+predict:  0.5032  0.5467
+[ CPUFloatType{1,2} ]
+label:  1
+[ CPULongType{1} ]
+Epoch: 8 | Batch: 30000 | Loss: 0.675454
+predict:  0.5083  0.5440
+[ CPUFloatType{1,2} ]
+label:  1
+[ CPULongType{1} ]
+Epoch: 8 | Batch: 40000 | Loss: 0.736781
+predict:  0.4475  0.5330
+[ CPUFloatType{1,2} ]
+label:  0
+[ CPULongType{1} ]
+Epoch: 8 | Batch: 50000 | Loss: 0.682078
+predict:  0.5048  0.5271
+[ CPUFloatType{1,2} ]
+label:  1
+[ CPULongType{1} ]
+Epoch: 8 | Batch: 60000 | Loss: 0.677317
+predict:  0.5191  0.4872
+[ CPUFloatType{1,2} ]
+label:  0
+[ CPULongType{1} ]
+Epoch: 9 | Batch: 10000 | Loss: 0.669617
+predict:  0.5229  0.4753
+[ CPUFloatType{1,2} ]
+label:  0
+[ CPULongType{1} ]
+Epoch: 9 | Batch: 20000 | Loss: 0.667302
+predict:  0.4782  0.5306
+[ CPUFloatType{1,2} ]
+label:  1
+[ CPULongType{1} ]
+Epoch: 9 | Batch: 30000 | Loss: 0.700194
+predict:  0.5564  0.5423
+[ CPUFloatType{1,2} ]
+label:  1
+[ CPULongType{1} ]
+Epoch: 9 | Batch: 40000 | Loss: 0.691451
+predict:  0.5368  0.5402
+[ CPUFloatType{1,2} ]
+label:  1
+[ CPULongType{1} ]
+Epoch: 9 | Batch: 50000 | Loss: 0.690607
+predict:  0.4718  0.4667
+[ CPUFloatType{1,2} ]
+label:  0
+[ CPULongType{1} ]
+Epoch: 9 | Batch: 60000 | Loss: 0.722845
+predict:  0.4873  0.5459
+[ CPUFloatType{1,2} ]
+label:  0
+[ CPULongType{1} ]
+Epoch: 10 | Batch: 10000 | Loss: 0.692207
+predict:  0.4552  0.4533
+[ CPUFloatType{1,2} ]
+label:  0
+[ CPULongType{1} ]
+Epoch: 10 | Batch: 20000 | Loss: 0.682937
+predict:  0.4948  0.5154
+[ CPUFloatType{1,2} ]
+label:  1
+[ CPULongType{1} ]
+Epoch: 10 | Batch: 30000 | Loss: 0.700943
+predict:  0.5300  0.5455
+[ CPUFloatType{1,2} ]
+label:  0
+[ CPULongType{1} ]
+Epoch: 10 | Batch: 40000 | Loss: 0.713039
+predict:  0.4221  0.4615
+[ CPUFloatType{1,2} ]
+label:  0
+[ CPULongType{1} ]
+Epoch: 10 | Batch: 50000 | Loss: 0.691454
+predict:  0.5271  0.5305
+[ CPUFloatType{1,2} ]
+label:  1
+[ CPULongType{1} ]
+Epoch: 10 | Batch: 60000 | Loss: 0.718207
+predict:  0.5607  0.5111
+[ CPUFloatType{1,2} ]
+label:  1
+[ CPULongType{1} ]

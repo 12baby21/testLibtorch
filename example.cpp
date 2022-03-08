@@ -3,6 +3,7 @@
 #include <string>
 using namespace std;
 using namespace torch::autograd;
+#include <fstream>
 
 // Define a new Module.
 class Net : public torch::nn::Module
@@ -21,7 +22,6 @@ public:
     // Use one of many tensor manipulation functions.
     x = fc1->forward(x.reshape({x.size(0), 784}));
     x = sigmoid(x);
-    cout << x.sizes() << endl;
     return x;
   }
 
@@ -41,7 +41,7 @@ private:
 
 public:
   // Constructor
-  myBackward(torch::Tensor pred, torch::Tensor label, torch::Tensor feature, int lr = 0.1) // diff = y - ^y
+  myBackward(torch::Tensor pred, torch::Tensor label, torch::Tensor feature, int lr = 0.1)
       : pred(pred), label(label), feature(feature), input(input), learning_rate(lr)
   {
   }
@@ -52,25 +52,25 @@ public:
 
   static torch::Tensor calGrad_weight(torch::Tensor pred, torch::Tensor label, torch::Tensor input)
   {
-    input.reshape({input.size(0), 784});
-    auto gradWeight = (label - pred[0][1]) * input;
+    auto gradWeight = (label - pred[0][0]) * input.reshape({input.size(0), 784});
     return gradWeight;
   }
 
   static torch::Tensor calGrad_bias(torch::Tensor pred, torch::Tensor label)
   {
-    auto gradBias = (label - pred[0][1]);
+    auto gradBias = (label - pred[0][0]);
     return gradBias;
   }
 
-  static torch::Tensor SGD_UpdateWeight(torch::Tensor gradWeight, torch::Tensor weight, int learning_rate = 0.1)
+  static void SGD_UpdateWeight(torch::Tensor gradWeight, torch::Tensor &weight, int learning_rate = 0.1)
   {
-    weight = weight + 0.1 * gradWeight;
+    weight = weight - learning_rate * gradWeight;
   }
 
-  static torch::Tensor SGD_UpdateBias(torch::Tensor gradBias, torch::Tensor bias, int learning_rate = 0.1)
+  static void SGD_UpdateBias(torch::Tensor gradBias, torch::Tensor &bias, int learning_rate = 0.1)
   {
-    1 + 2;
+
+    bias = bias - learning_rate * gradBias;
   }
 };
 
@@ -84,16 +84,16 @@ int main()
   auto data_loader = torch::data::make_data_loader(
       torch::data::datasets::MNIST("/home/wjf/Desktop/testLibtorch/data").map(torch::data::transforms::Stack<>()));
 
-  // Instantiate an SGD optimization algorithm to update our Net's parameters.
-  torch::optim::SGD optimA(PartyA->parameters(), /*lr=*/0.01);
-  torch::optim::SGD optimB(PartyB->parameters(), /*lr=*/0.01);
-
-  for (size_t epoch = 1; epoch <= 5; ++epoch)
+  std::ofstream sfile("./log.txt", ios::out);
+  int lr = 0.5;
+  for (size_t epoch = 1; epoch <= 10; ++epoch)
   {
+    lr -= 0.01;
     size_t batch_index = 0;
     // Iterate the data loader to yield batches from the dataset.
     for (auto &batch : *data_loader)
     {
+
       torch::Tensor tmp = torch::zeros_like(batch.target);
       if (torch::equal(batch.target % 2, tmp))
       {
@@ -104,9 +104,6 @@ int main()
         batch.target.fill_(1);
       }
 
-      // Reset gradients.
-      optimA.zero_grad();
-      optimB.zero_grad();
       // Execute the model on the input data.
       torch::Tensor predictionA = PartyA->forward(batch.data);
       torch::Tensor predictionB = PartyB->forward(batch.data);
@@ -114,24 +111,59 @@ int main()
       // partyA的预测值+partyB的预测值
       torch::Tensor newPrediction = 0.5 * predictionA + 0.5 * predictionB;
 
-      auto loss = torch::cross_entropy_loss(newPrediction, batch.target);
+      // 计算loss
+      auto loss = torch::cross_entropy_loss(predictionA, batch.target);
 
-      loss.backward();
-
-      // Update the parameters based on the calculated gradients.
-      optimA.step();
-      optimB.step();
+      // 更新模型
+      auto gradWeight = myBackward::calGrad_weight(newPrediction, batch.target, batch.data);
+      auto gradBias = myBackward::calGrad_bias(newPrediction, batch.target);
+      myBackward::SGD_UpdateWeight(gradWeight, PartyA->fc1->weight, lr);
+      myBackward::SGD_UpdateBias(gradBias, PartyA->fc1->bias, lr);
+      myBackward::SGD_UpdateWeight(gradWeight, PartyB->fc1->weight, lr);
+      myBackward::SGD_UpdateBias(gradBias, PartyB->fc1->bias, lr);
 
       // Output the loss and checkpoint every 100 batches.
-      if (++batch_index % 100 == 0)
+      if (++batch_index % 10000 == 0)
       {
-        std::cout << "Epoch: " << epoch << " | Batch: " << batch_index
-                  << " | Loss: " << loss.item<float>() << std::endl;
+        cout << "We have trained " << epoch << " epochs..." << endl;
+        sfile << "Epoch: " << epoch << " | Batch: " << batch_index
+              << " | Loss: " << loss.item<float>() << std::endl;
         // Serialize your model periodically as a checkpoint.
+        sfile << "predict: " << predictionA << endl;
+        sfile << "label: " << batch.target << endl;
         torch::save(PartyA, "netA.pt");
         torch::save(PartyB, "netB.pt");
       }
     }
   }
+  sfile.close();
   return 0;
 }
+
+#include <iostream>
+#include <torch/script.h>
+#include <torch/csrc/api/include/torch/torch.h>
+ 
+// Define a new Module.
+struct Net : torch::nn::Module {
+    Net() {
+        // Construct and register two Linear submodules.
+        fc1 = register_module("fc1", torch::nn::Linear(784, 64));
+        fc2 = register_module("fc2", torch::nn::Linear(64, 32));
+        fc3 = register_module("fc3", torch::nn::Linear(32, 10));
+    }
+ 
+    // Implement the Net's algorithm.
+    torch::Tensor forward(torch::Tensor x) {
+        // Use one of many tensor manipulation functions.
+        x = torch::relu(fc1->forward(x.reshape({ x.size(0), 784 })));
+        x = torch::dropout(x, /*p=*/0.5, /*train=*/is_training());
+        x = torch::relu(fc2->forward(x));
+        x = torch::log_softmax(fc3->forward(x), /*dim=*/1);
+        return x;
+    }
+ 
+    // Use one of many "standard library" modules.
+    torch::nn::Linear fc1{ nullptr }, fc2{ nullptr }, fc3{ nullptr };
+};
+ 
