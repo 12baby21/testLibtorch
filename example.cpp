@@ -1,3 +1,8 @@
+/**
+ * Size of weight: [2, 784]
+ * Size of bias: [2]
+ **/
+
 #include <torch/torch.h>
 #include <iostream>
 #include <string>
@@ -52,25 +57,25 @@ public:
 
   static torch::Tensor calGrad_weight(torch::Tensor pred, torch::Tensor label, torch::Tensor input)
   {
-    auto gradWeight = (label - pred[0][0]) * input.reshape({input.size(0), 784});
+    auto gradWeight = (label - pred).t() * input.reshape({input.size(0), 784});
+
     return gradWeight;
   }
 
   static torch::Tensor calGrad_bias(torch::Tensor pred, torch::Tensor label)
   {
-    auto gradBias = (label - pred[0][0]);
+    auto gradBias = (label - pred).squeeze_();
     return gradBias;
   }
 
   static void SGD_UpdateWeight(torch::Tensor gradWeight, torch::Tensor &weight, int learning_rate = 0.1)
   {
-    weight = weight - learning_rate * gradWeight;
+    weight = weight - learning_rate * gradWeight / 60000;
   }
 
   static void SGD_UpdateBias(torch::Tensor gradBias, torch::Tensor &bias, int learning_rate = 0.1)
   {
-
-    bias = bias - learning_rate * gradBias;
+    bias = bias - learning_rate * gradBias / 60000;
   }
 };
 
@@ -83,17 +88,17 @@ int main()
   // Create data loader.
   auto data_loader = torch::data::make_data_loader(
       torch::data::datasets::MNIST("/home/wjf/Desktop/testLibtorch/data").map(torch::data::transforms::Stack<>()));
+  auto test_loader = torch::data::make_data_loader(
+      torch::data::datasets::MNIST("/home/wjf/Desktop/testLibtorch/data", torch::data::datasets::MNIST::Mode::kTest).map(torch::data::transforms::Stack<>()));
 
   std::ofstream sfile("./log.txt", ios::out);
-  int lr = 0.5;
-  for (size_t epoch = 1; epoch <= 10; ++epoch)
+  int lr = 0.1;
+  for (size_t epoch = 1; epoch <= 3; ++epoch)
   {
-    lr -= 0.01;
     size_t batch_index = 0;
     // Iterate the data loader to yield batches from the dataset.
     for (auto &batch : *data_loader)
     {
-
       torch::Tensor tmp = torch::zeros_like(batch.target);
       if (torch::equal(batch.target % 2, tmp))
       {
@@ -107,9 +112,11 @@ int main()
       // Execute the model on the input data.
       torch::Tensor predictionA = PartyA->forward(batch.data);
       torch::Tensor predictionB = PartyB->forward(batch.data);
-
+      
       // partyA的预测值+partyB的预测值
       torch::Tensor newPrediction = 0.5 * predictionA + 0.5 * predictionB;
+
+      delete &predictionA;
 
       // 计算loss
       auto loss = torch::cross_entropy_loss(predictionA, batch.target);
@@ -128,42 +135,12 @@ int main()
         cout << "We have trained " << epoch << " epochs..." << endl;
         sfile << "Epoch: " << epoch << " | Batch: " << batch_index
               << " | Loss: " << loss.item<float>() << std::endl;
-        // Serialize your model periodically as a checkpoint.
-        sfile << "predict: " << predictionA << endl;
-        sfile << "label: " << batch.target << endl;
-        torch::save(PartyA, "netA.pt");
-        torch::save(PartyB, "netB.pt");
+
+        
       }
     }
   }
+
   sfile.close();
   return 0;
 }
-
-#include <iostream>
-#include <torch/script.h>
-#include <torch/csrc/api/include/torch/torch.h>
- 
-// Define a new Module.
-struct Net : torch::nn::Module {
-    Net() {
-        // Construct and register two Linear submodules.
-        fc1 = register_module("fc1", torch::nn::Linear(784, 64));
-        fc2 = register_module("fc2", torch::nn::Linear(64, 32));
-        fc3 = register_module("fc3", torch::nn::Linear(32, 10));
-    }
- 
-    // Implement the Net's algorithm.
-    torch::Tensor forward(torch::Tensor x) {
-        // Use one of many tensor manipulation functions.
-        x = torch::relu(fc1->forward(x.reshape({ x.size(0), 784 })));
-        x = torch::dropout(x, /*p=*/0.5, /*train=*/is_training());
-        x = torch::relu(fc2->forward(x));
-        x = torch::log_softmax(fc3->forward(x), /*dim=*/1);
-        return x;
-    }
- 
-    // Use one of many "standard library" modules.
-    torch::nn::Linear fc1{ nullptr }, fc2{ nullptr }, fc3{ nullptr };
-};
- 

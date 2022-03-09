@@ -202,10 +202,6 @@ CMakeFiles/example.dir/example.cpp.o
  /home/wjf/libtorch/include/c10/util/string_view.h
  /home/wjf/libtorch/include/c10/util/typeid.h
  /home/wjf/libtorch/include/c10/util/variant.h
- /home/wjf/libtorch/include/caffe2/serialize/inline_container.h
- /home/wjf/libtorch/include/caffe2/serialize/istream_adapter.h
- /home/wjf/libtorch/include/caffe2/serialize/read_adapter_interface.h
- /home/wjf/libtorch/include/caffe2/serialize/versions.h
  /home/wjf/libtorch/include/pybind11/attr.h
  /home/wjf/libtorch/include/pybind11/buffer_info.h
  /home/wjf/libtorch/include/pybind11/cast.h
@@ -378,7 +374,6 @@ CMakeFiles/example.dir/example.cpp.o
  /home/wjf/libtorch/include/torch/csrc/api/include/torch/types.h
  /home/wjf/libtorch/include/torch/csrc/api/include/torch/utils.h
  /home/wjf/libtorch/include/torch/csrc/api/include/torch/version.h
- /home/wjf/libtorch/include/torch/csrc/autograd/InferenceMode.h
  /home/wjf/libtorch/include/torch/csrc/autograd/anomaly_mode.h
  /home/wjf/libtorch/include/torch/csrc/autograd/autograd.h
  /home/wjf/libtorch/include/torch/csrc/autograd/autograd_not_implemented_fallback.h
@@ -417,17 +412,12 @@ CMakeFiles/example.dir/example.cpp.o
  /home/wjf/libtorch/include/torch/csrc/jit/passes/shape_analysis.h
  /home/wjf/libtorch/include/torch/csrc/jit/python/update_graph_executor_opt.h
  /home/wjf/libtorch/include/torch/csrc/jit/runtime/argument_spec.h
- /home/wjf/libtorch/include/torch/csrc/jit/runtime/custom_operator.h
  /home/wjf/libtorch/include/torch/csrc/jit/runtime/graph_executor.h
  /home/wjf/libtorch/include/torch/csrc/jit/runtime/interpreter.h
  /home/wjf/libtorch/include/torch/csrc/jit/runtime/jit_exception.h
  /home/wjf/libtorch/include/torch/csrc/jit/runtime/operator.h
  /home/wjf/libtorch/include/torch/csrc/jit/runtime/operator_options.h
  /home/wjf/libtorch/include/torch/csrc/jit/runtime/variable_tensor_list.h
- /home/wjf/libtorch/include/torch/csrc/jit/serialization/import.h
- /home/wjf/libtorch/include/torch/csrc/jit/serialization/pickle.h
- /home/wjf/libtorch/include/torch/csrc/jit/serialization/pickler.h
- /home/wjf/libtorch/include/torch/csrc/jit/serialization/unpickler.h
  /home/wjf/libtorch/include/torch/csrc/python_headers.h
  /home/wjf/libtorch/include/torch/csrc/utils/auto_gil.h
  /home/wjf/libtorch/include/torch/csrc/utils/crash_handler.h
@@ -444,7 +434,6 @@ CMakeFiles/example.dir/example.cpp.o
  /home/wjf/libtorch/include/torch/custom_class_detail.h
  /home/wjf/libtorch/include/torch/extension.h
  /home/wjf/libtorch/include/torch/library.h
- /home/wjf/libtorch/include/torch/script.h
  /usr/local/cuda-11.4/include/builtin_types.h
  /usr/local/cuda-11.4/include/crt/host_defines.h
  /usr/local/cuda-11.4/include/cuda.h

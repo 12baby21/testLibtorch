@@ -201,10 +201,6 @@ CMakeFiles/example.dir/example.cpp.o: /home/wjf/libtorch/include/c10/util/string
 CMakeFiles/example.dir/example.cpp.o: /home/wjf/libtorch/include/c10/util/string_view.h
 CMakeFiles/example.dir/example.cpp.o: /home/wjf/libtorch/include/c10/util/typeid.h
 CMakeFiles/example.dir/example.cpp.o: /home/wjf/libtorch/include/c10/util/variant.h
-CMakeFiles/example.dir/example.cpp.o: /home/wjf/libtorch/include/caffe2/serialize/inline_container.h
-CMakeFiles/example.dir/example.cpp.o: /home/wjf/libtorch/include/caffe2/serialize/istream_adapter.h
-CMakeFiles/example.dir/example.cpp.o: /home/wjf/libtorch/include/caffe2/serialize/read_adapter_interface.h
-CMakeFiles/example.dir/example.cpp.o: /home/wjf/libtorch/include/caffe2/serialize/versions.h
 CMakeFiles/example.dir/example.cpp.o: /home/wjf/libtorch/include/pybind11/attr.h
 CMakeFiles/example.dir/example.cpp.o: /home/wjf/libtorch/include/pybind11/buffer_info.h
 CMakeFiles/example.dir/example.cpp.o: /home/wjf/libtorch/include/pybind11/cast.h
@@ -377,7 +373,6 @@ CMakeFiles/example.dir/example.cpp.o: /home/wjf/libtorch/include/torch/csrc/api/
 CMakeFiles/example.dir/example.cpp.o: /home/wjf/libtorch/include/torch/csrc/api/include/torch/types.h
 CMakeFiles/example.dir/example.cpp.o: /home/wjf/libtorch/include/torch/csrc/api/include/torch/utils.h
 CMakeFiles/example.dir/example.cpp.o: /home/wjf/libtorch/include/torch/csrc/api/include/torch/version.h
-CMakeFiles/example.dir/example.cpp.o: /home/wjf/libtorch/include/torch/csrc/autograd/InferenceMode.h
 CMakeFiles/example.dir/example.cpp.o: /home/wjf/libtorch/include/torch/csrc/autograd/anomaly_mode.h
 CMakeFiles/example.dir/example.cpp.o: /home/wjf/libtorch/include/torch/csrc/autograd/autograd.h
 CMakeFiles/example.dir/example.cpp.o: /home/wjf/libtorch/include/torch/csrc/autograd/autograd_not_implemented_fallback.h
@@ -416,17 +411,12 @@ CMakeFiles/example.dir/example.cpp.o: /home/wjf/libtorch/include/torch/csrc/jit/
 CMakeFiles/example.dir/example.cpp.o: /home/wjf/libtorch/include/torch/csrc/jit/passes/shape_analysis.h
 CMakeFiles/example.dir/example.cpp.o: /home/wjf/libtorch/include/torch/csrc/jit/python/update_graph_executor_opt.h
 CMakeFiles/example.dir/example.cpp.o: /home/wjf/libtorch/include/torch/csrc/jit/runtime/argument_spec.h
-CMakeFiles/example.dir/example.cpp.o: /home/wjf/libtorch/include/torch/csrc/jit/runtime/custom_operator.h
 CMakeFiles/example.dir/example.cpp.o: /home/wjf/libtorch/include/torch/csrc/jit/runtime/graph_executor.h
 CMakeFiles/example.dir/example.cpp.o: /home/wjf/libtorch/include/torch/csrc/jit/runtime/interpreter.h
 CMakeFiles/example.dir/example.cpp.o: /home/wjf/libtorch/include/torch/csrc/jit/runtime/jit_exception.h
 CMakeFiles/example.dir/example.cpp.o: /home/wjf/libtorch/include/torch/csrc/jit/runtime/operator.h
 CMakeFiles/example.dir/example.cpp.o: /home/wjf/libtorch/include/torch/csrc/jit/runtime/operator_options.h
 CMakeFiles/example.dir/example.cpp.o: /home/wjf/libtorch/include/torch/csrc/jit/runtime/variable_tensor_list.h
-CMakeFiles/example.dir/example.cpp.o: /home/wjf/libtorch/include/torch/csrc/jit/serialization/import.h
-CMakeFiles/example.dir/example.cpp.o: /home/wjf/libtorch/include/torch/csrc/jit/serialization/pickle.h
-CMakeFiles/example.dir/example.cpp.o: /home/wjf/libtorch/include/torch/csrc/jit/serialization/pickler.h
-CMakeFiles/example.dir/example.cpp.o: /home/wjf/libtorch/include/torch/csrc/jit/serialization/unpickler.h
 CMakeFiles/example.dir/example.cpp.o: /home/wjf/libtorch/include/torch/csrc/python_headers.h
 CMakeFiles/example.dir/example.cpp.o: /home/wjf/libtorch/include/torch/csrc/utils/auto_gil.h
 CMakeFiles/example.dir/example.cpp.o: /home/wjf/libtorch/include/torch/csrc/utils/crash_handler.h
@@ -443,7 +433,6 @@ CMakeFiles/example.dir/example.cpp.o: /home/wjf/libtorch/include/torch/custom_cl
 CMakeFiles/example.dir/example.cpp.o: /home/wjf/libtorch/include/torch/custom_class_detail.h
 CMakeFiles/example.dir/example.cpp.o: /home/wjf/libtorch/include/torch/extension.h
 CMakeFiles/example.dir/example.cpp.o: /home/wjf/libtorch/include/torch/library.h
-CMakeFiles/example.dir/example.cpp.o: /home/wjf/libtorch/include/torch/script.h
 CMakeFiles/example.dir/example.cpp.o: /usr/local/cuda-11.4/include/builtin_types.h
 CMakeFiles/example.dir/example.cpp.o: /usr/local/cuda-11.4/include/crt/host_defines.h
 CMakeFiles/example.dir/example.cpp.o: /usr/local/cuda-11.4/include/cuda.h
