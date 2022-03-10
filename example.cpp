@@ -10,168 +10,144 @@ using namespace std;
 using namespace torch::autograd;
 #include <fstream>
 #include <cmath>
+#include <utility>
 
 // Define a new Module.
-class Net : public torch::nn::Module
-{
+class Net : public torch::nn::Module {
 public:
-  Net()
-  {
-    // Construct and register two Linear submodules.
-    fc1 = register_module("fc1", torch::nn::Linear(784, 2));
-    sigmoid = register_module("sigmoid", torch::nn::Sigmoid());
-  }
+    Net() {
+        // Construct and register two Linear submodules.
+        fc1 = register_module("fc1", torch::nn::Linear(784, 2));
+        sigmoid = register_module("sigmoid", torch::nn::Sigmoid());
+    }
 
-  // Implement the Net's algorithm.
-  torch::Tensor forward(torch::Tensor x)
-  {
-    // Use one of many tensor manipulation functions.
-    x = fc1->forward(x.reshape({x.size(0), 784}));
-    x = sigmoid(x);
-    return x;
-  }
+    // Implement the Net's algorithm.
+    torch::Tensor forward(torch::Tensor x) {
+        // Use one of many tensor manipulation functions.
+        x = fc1->forward(x.reshape({x.size(0), 784}));
+        x = sigmoid(x);
+        return x;
+    }
 
-  // Use one of many "standard library" modules.
-  torch::nn::Linear fc1{nullptr};
-  torch::nn::Sigmoid sigmoid{nullptr};
+    // Use one of many "standard library" modules.
+    torch::nn::Linear fc1{nullptr};
+    torch::nn::Sigmoid sigmoid{nullptr};
 };
 
-class myBackward
-{
+class myBackward {
 private:
-  torch::Tensor pred;
-  torch::Tensor feature;
-  torch::Tensor label;
-  torch::Tensor input;
-  int learning_rate;
+    torch::Tensor pred;
+    torch::Tensor feature;
+    torch::Tensor label;
+    torch::Tensor input;
+    int learning_rate;
 
 public:
-  // Constructor
-  myBackward(torch::Tensor pred, torch::Tensor label, torch::Tensor feature, int lr = 0.1)
-      : pred(pred), label(label), feature(feature), input(input), learning_rate(lr)
-  {
-  }
-
-  myBackward() = default;
-
-  ~myBackward() = default;
-
-  static torch::Tensor calGrad_weight(torch::Tensor pred, torch::Tensor label, torch::Tensor input)
-  {         
-    auto newLabel = label.item<int>();
-    torch::Tensor correct = torch::zeros({1, 2}).toType(torch::kLong);
-    if (newLabel == 1)
-    {
-      correct[0][1] = 1;
+    // Constructor
+    myBackward(torch::Tensor pred, torch::Tensor label, torch::Tensor feature, double lr = 0.1)
+        : pred(std::move(pred)), label(std::move(label)), feature(std::move(feature)), input(input), learning_rate(lr) {
     }
-    else
-    {
-      correct[0][0] = 1;
+
+    myBackward() = default;
+
+    ~myBackward() = default;
+
+    static torch::Tensor calGrad_weight(const torch::Tensor &pred,
+                                        const torch::Tensor &label,
+                                        const torch::Tensor &input) {
+        auto newLabel = label.item<int>();
+        torch::Tensor correct = torch::zeros({1, 2}).toType(torch::kLong);
+        if (newLabel==1) {
+            correct[0][1] = 1;
+        } else {
+            correct[0][0] = 1;
+        }
+        auto gradWeight = -1*torch::mm((correct - pred).t(), input.reshape({input.size(0), 784}));
+
+        return gradWeight;
     }
-    auto gradWeight = -1 * torch::mm((correct - pred).t(), input.reshape({input.size(0), 784}));
 
-    return gradWeight;
-  }
-
-  static torch::Tensor calGrad_bias(torch::Tensor pred, torch::Tensor label)
-  {
-    auto newLabel = label.item<int>();
-    torch::Tensor correct = torch::zeros({1, 2});
-    if (newLabel == 1)
-    {
-      correct[0][1] = 1;
+    static torch::Tensor calGrad_bias(const torch::Tensor &pred, const torch::Tensor &label) {
+        auto newLabel = label.item<int>();
+        torch::Tensor correct = torch::zeros({1, 2});
+        if (newLabel==1) {
+            correct[0][1] = 1;
+        } else {
+            correct[0][0] = 1;
+        }
+        auto gradBias = -1*(correct - pred).squeeze();
+        return gradBias;
     }
-    else
-    {
-      correct[0][0] = 1;
+
+    static void SGD_UpdateWeight(const torch::Tensor &gradWeight, torch::Tensor &weight, double learning_rate = 0.1) {
+        weight = weight - learning_rate*gradWeight;
     }
-    auto gradBias = -1 * (correct - pred).squeeze();
-    return gradBias;
-  }
 
-  static void SGD_UpdateWeight(torch::Tensor &gradWeight, torch::Tensor &weight, int learning_rate = 0.1)
-  {
-    weight = weight - learning_rate * gradWeight;
-  }
-
-  static void SGD_UpdateBias(torch::Tensor gradBias, torch::Tensor &bias, int learning_rate = 0.1)
-  {
-    bias = bias - learning_rate * gradBias;
-  }
+    static void SGD_UpdateBias(const torch::Tensor &gradBias, torch::Tensor &bias, double learning_rate = 0.1) {
+        bias = bias - learning_rate*gradBias;
+    }
 };
 
-int main()
-{
-  // Create Nets of PartyA and PartyB.
-  auto PartyA = std::make_shared<Net>();
-  // auto PartyB = std::make_shared<Net>();
+int main() {
+    // Create Nets of PartyA and PartyB.
+    auto PartyA = std::make_shared<Net>();
+    // auto PartyB = std::make_shared<Net>();
 
-  // Create data loader.
-  auto data_loader = torch::data::make_data_loader(
-      torch::data::datasets::MNIST("/home/wjf/Desktop/testLibtorch/data").map(torch::data::transforms::Stack<>()));
+    // Create data loader.
+    auto data_loader = torch::data::make_data_loader(
+        torch::data::datasets::MNIST("../data").map(torch::data::transforms::Stack<>()));
 
-  std::ofstream sfile("./log.txt", ios::out);
-  int lr = 0.01;
-  for (size_t epoch = 1; epoch <= 1; ++epoch)
-  {
-    float lossSum = 0;
-    size_t batch_index = 0;
-    // Iterate the data loader to yield batches from the dataset.
-    for (auto &batch : *data_loader)
-    {
-      torch::Tensor myTarget = torch::zeros({1}).toType(torch::kLong);
-      int labelTarget = batch.target.item<int>();
-      if (labelTarget % 2 == 1)
-      {
-        myTarget[0] = 1;
-      }
+    std::ofstream sfile("./log.txt", ios::out);
+    double lr = 0.01;
+    torch::Tensor myTarget, predictionA, loss, gradWeight, gradBias;
 
-      // Execute the model on the input data.
-      torch::Tensor predictionA = PartyA->forward(batch.data);
-      // torch::Tensor predictionB = PartyB->forward(batch.data);
+    for (size_t epoch = 1; epoch <= 10; ++epoch) {
+        float lossSum = 0;
+        size_t batch_index = 0;
+        // Iterate the data loader to yield batches from the dataset.
+        for (auto &batch : *data_loader) {
+            myTarget = torch::zeros({1}).toType(torch::kLong);
+            int labelTarget = batch.target.item<int>();
+            if (labelTarget%2==1) {
+                myTarget[0] = 1;
+            }
 
-      // partyA的预测值+partyB的预测值
-      // torch::Tensor newPrediction = 0.5 * predictionA + 0.5 * predictionB;
+            // Execute the model on the input data.
+            predictionA = PartyA->forward(batch.data);
+            // torch::Tensor predictionB = PartyB->forward(batch.data);
 
-      // 计算loss
-      /*
-      auto index = (torch::argmax(predictionA)).item<int>();
-      float _y = predictionA[0][index].item<float>();
-      auto y = (batch.target).item<int>();
-      cout << _y << endl;
-      cout << y << endl;
-      auto loss = - (y * log2f32(_y) + (1 - y) * log2f32(1 - _y));
-      lossSum -= loss;
-      */
-      auto loss = torch::cross_entropy_loss(predictionA, myTarget);
-      // auto loss = torch::cross_entropy_loss(newPrediction, batch.target);
-      lossSum += loss.item<float>();
+            // partyA的预测值+partyB的预测值
+            // torch::Tensor newPrediction = 0.5 * predictionA + 0.5 * predictionB;
 
-      // 更新模型
-      auto gradWeight = myBackward::calGrad_weight(predictionA, myTarget, batch.data);
-      auto gradBias = myBackward::calGrad_bias(predictionA, myTarget);
-      myBackward::SGD_UpdateWeight(gradWeight, PartyA->fc1->weight, lr);
-      myBackward::SGD_UpdateBias(gradBias, PartyA->fc1->bias, lr);
-      /*
-      auto gradWeight = myBackward::calGrad_weight(newPrediction, batch.target, batch.data);
-      auto gradBias = myBackward::calGrad_bias(newPrediction, batch.target);
-      myBackward::SGD_UpdateWeight(gradWeight, PartyA->fc1->weight, lr);
-      myBackward::SGD_UpdateBias(gradBias, PartyA->fc1->bias, lr);
-      myBackward::SGD_UpdateWeight(gradWeight, PartyB->fc1->weight, lr);
-      myBackward::SGD_UpdateBias(gradBias, PartyB->fc1->bias, lr);
-      */
+            // 计算loss
+            loss = torch::cross_entropy_loss(predictionA, myTarget);
+            // auto loss = torch::cross_entropy_loss(newPrediction, batch.target);
+            lossSum += loss.item<float>();
 
-      ++batch_index;
-      // Output the loss and checkpoint every 100 batches.
-      if (batch_index % 10000 == 0)
-      {
-        cout << "We have trained " << epoch << " epochs..." << endl;
-        sfile << "Epoch: " << epoch << " | Batch: " << batch_index
-              << " | Average Loss: " << lossSum / batch_index << std::endl;
-      }
+            // 更新模型
+            gradWeight = myBackward::calGrad_weight(predictionA, myTarget, batch.data);
+            gradBias = myBackward::calGrad_bias(predictionA, myTarget);
+            myBackward::SGD_UpdateWeight(gradWeight, PartyA->fc1->weight, lr);
+            myBackward::SGD_UpdateBias(gradBias, PartyA->fc1->bias, lr);
+            /*
+            auto gradWeight = myBackward::calGrad_weight(newPrediction, batch.target, batch.data);
+            auto gradBias = myBackward::calGrad_bias(newPrediction, batch.target);
+            myBackward::SGD_UpdateWeight(gradWeight, PartyA->fc1->weight, lr);
+            myBackward::SGD_UpdateBias(gradBias, PartyA->fc1->bias, lr);
+            myBackward::SGD_UpdateWeight(gradWeight, PartyB->fc1->weight, lr);
+            myBackward::SGD_UpdateBias(gradBias, PartyB->fc1->bias, lr);
+            */
+
+            ++batch_index;
+            // Output the loss and checkpoint every 100 batches.
+            if (batch_index%10000==0) {
+                cout << "We have trained " << epoch << " epochs..." << endl;
+                sfile << "Epoch: " << epoch << " | Batch: " << batch_index
+                      << " | Average Loss: " << lossSum/batch_index << std::endl;
+            }
+        }
     }
-  }
 
-  sfile.close();
-  return 0;
+    sfile.close();
+    return 0;
 }
