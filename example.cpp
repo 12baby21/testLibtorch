@@ -57,9 +57,9 @@ public:
   ~myBackward() = default;
 
   static torch::Tensor calGrad_weight(torch::Tensor pred, torch::Tensor label, torch::Tensor input)
-  {
+  {         
     auto newLabel = label.item<int>();
-    torch::Tensor correct = torch::zeros({1, 2});
+    torch::Tensor correct = torch::zeros({1, 2}).toType(torch::kLong);
     if (newLabel == 1)
     {
       correct[0][1] = 1;
@@ -68,7 +68,6 @@ public:
     {
       correct[0][0] = 1;
     }
-
     auto gradWeight = -1 * torch::mm((correct - pred).t(), input.reshape({input.size(0), 784}));
 
     return gradWeight;
@@ -112,21 +111,19 @@ int main()
       torch::data::datasets::MNIST("/home/wjf/Desktop/testLibtorch/data").map(torch::data::transforms::Stack<>()));
 
   std::ofstream sfile("./log.txt", ios::out);
-  int lr = 0.1;
-  for (size_t epoch = 1; epoch <= 5; ++epoch)
+  int lr = 0.01;
+  for (size_t epoch = 1; epoch <= 1; ++epoch)
   {
     float lossSum = 0;
     size_t batch_index = 0;
     // Iterate the data loader to yield batches from the dataset.
     for (auto &batch : *data_loader)
     {
-      if (batch.target.item<int>() % 2, 0)
+      torch::Tensor myTarget = torch::zeros({1}).toType(torch::kLong);
+      int labelTarget = batch.target.item<int>();
+      if (labelTarget % 2 == 1)
       {
-        batch.target.fill_(0);
-      }
-      else
-      {
-        batch.target.fill_(1);
+        myTarget[0] = 1;
       }
 
       // Execute the model on the input data.
@@ -143,16 +140,16 @@ int main()
       auto y = (batch.target).item<int>();
       cout << _y << endl;
       cout << y << endl;
-      auto loss = y * log2f32(_y) + (1 - y) * log2f32(1 - _y);
+      auto loss = - (y * log2f32(_y) + (1 - y) * log2f32(1 - _y));
       lossSum -= loss;
       */
-      auto loss = torch::cross_entropy_loss(predictionA, batch.target);
+      auto loss = torch::cross_entropy_loss(predictionA, myTarget);
       // auto loss = torch::cross_entropy_loss(newPrediction, batch.target);
       lossSum += loss.item<float>();
 
       // 更新模型
-      auto gradWeight = myBackward::calGrad_weight(predictionA, batch.target, batch.data);
-      auto gradBias = myBackward::calGrad_bias(predictionA, batch.target);
+      auto gradWeight = myBackward::calGrad_weight(predictionA, myTarget, batch.data);
+      auto gradBias = myBackward::calGrad_bias(predictionA, myTarget);
       myBackward::SGD_UpdateWeight(gradWeight, PartyA->fc1->weight, lr);
       myBackward::SGD_UpdateBias(gradBias, PartyA->fc1->bias, lr);
       /*
