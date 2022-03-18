@@ -1,6 +1,7 @@
 #ifndef _UTIL_H_
 #define _UTIL_H_
 #include <torch/torch.h>
+#include <gmp.h>
 
 // Backward function
 class myBackward
@@ -13,11 +14,11 @@ public:
     ~myBackward() = default;
 
     static torch::Tensor calGrad_weight(const torch::Tensor &pred,
-                                        const int label,
+                                        const torch::Tensor &diff,
                                         const torch::Tensor &input);
 
     static torch::Tensor calGrad_bias(const torch::Tensor &pred,
-                                      const int &label);
+                                      const torch::Tensor &diff);
 
     static void SGD_UpdateWeight(const torch::Tensor &gradWeight,
                                  torch::Tensor &weight,
@@ -52,5 +53,6 @@ public:
     torch::nn::Linear fc1{nullptr};
     torch::nn::Sigmoid sigmoid{nullptr};
 };
+
 
 #endif

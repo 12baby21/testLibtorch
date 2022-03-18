@@ -150,6 +150,60 @@ example.cpp.s:
 	$(MAKE) -f CMakeFiles/example.dir/build.make CMakeFiles/example.dir/example.cpp.s
 .PHONY : example.cpp.s
 
+gradComputation.o: gradComputation.cpp.o
+
+.PHONY : gradComputation.o
+
+# target to build an object file
+gradComputation.cpp.o:
+	$(MAKE) -f CMakeFiles/example.dir/build.make CMakeFiles/example.dir/gradComputation.cpp.o
+.PHONY : gradComputation.cpp.o
+
+gradComputation.i: gradComputation.cpp.i
+
+.PHONY : gradComputation.i
+
+# target to preprocess a source file
+gradComputation.cpp.i:
+	$(MAKE) -f CMakeFiles/example.dir/build.make CMakeFiles/example.dir/gradComputation.cpp.i
+.PHONY : gradComputation.cpp.i
+
+gradComputation.s: gradComputation.cpp.s
+
+.PHONY : gradComputation.s
+
+# target to generate assembly for a file
+gradComputation.cpp.s:
+	$(MAKE) -f CMakeFiles/example.dir/build.make CMakeFiles/example.dir/gradComputation.cpp.s
+.PHONY : gradComputation.cpp.s
+
+paillier.o: paillier.cpp.o
+
+.PHONY : paillier.o
+
+# target to build an object file
+paillier.cpp.o:
+	$(MAKE) -f CMakeFiles/example.dir/build.make CMakeFiles/example.dir/paillier.cpp.o
+.PHONY : paillier.cpp.o
+
+paillier.i: paillier.cpp.i
+
+.PHONY : paillier.i
+
+# target to preprocess a source file
+paillier.cpp.i:
+	$(MAKE) -f CMakeFiles/example.dir/build.make CMakeFiles/example.dir/paillier.cpp.i
+.PHONY : paillier.cpp.i
+
+paillier.s: paillier.cpp.s
+
+.PHONY : paillier.s
+
+# target to generate assembly for a file
+paillier.cpp.s:
+	$(MAKE) -f CMakeFiles/example.dir/build.make CMakeFiles/example.dir/paillier.cpp.s
+.PHONY : paillier.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -162,6 +216,12 @@ help:
 	@echo "... example.o"
 	@echo "... example.i"
 	@echo "... example.s"
+	@echo "... gradComputation.o"
+	@echo "... gradComputation.i"
+	@echo "... gradComputation.s"
+	@echo "... paillier.o"
+	@echo "... paillier.i"
+	@echo "... paillier.s"
 .PHONY : help
 
 

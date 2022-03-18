@@ -1,23 +1,27 @@
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
-project(example)
+project(example LANGUAGES CXX)
 
+# Libtorch directory
 set(Torch_DIR /home/wjf/libtorch/share/cmake/Torch)
 find_package(Torch REQUIRED)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
+# Disable C++ extensions
+set(CMAKE_CXX_EXTENSIONS OFF)
+# Require full C++ standard
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # main.cpp
-add_executable(example gradComputation.cpp example.cpp)
-
-# include
-include_directories(./)
+aux_source_directory(./ SOURCE_DIR)
+add_executable(example ${SOURCE_DIR})
 
 # link libtorch .a .so
-
 target_link_libraries(example "${TORCH_LIBRARIES}")
+target_link_libraries(example gmp)
 
 #
 set_property(TARGET example PROPERTY CXX_STANDARD 14)
+
 
 
 # The following code block is suggested to be used on Windows.
