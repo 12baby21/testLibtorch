@@ -15,6 +15,6 @@ void EncryptAdd(mpz_ptr res, mpz_ptr c1, mpz_ptr c2, mpz_ptr n_2);
 void EncryptMul(mpz_ptr res, mpz_ptr c, mpz_ptr m, mpz_ptr n, mpz_ptr nsquare);
 void Encode(mpz_ptr res, mpz_ptr n, float scalar, int scale = 1e6);
 void Decode(float &res, mpz_ptr n, mpz_ptr plain, bool isMul, int scale_factor = 1e6);
-
+void GenRandom(mpz_ptr res, int bits);
 
 #endif

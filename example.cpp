@@ -45,6 +45,10 @@ int main()
 
     for (size_t epoch = 1; epoch <= 1; ++epoch)
     {
+        // 这里需要增加一个随机掩码R
+        mpz_t R;
+        mpz_init(R);
+
         float lossSum = 0;
         size_t batch_index = 0;
         // Iterate the data loader to yield batches from the dataset.
@@ -129,8 +133,14 @@ int main()
                 {
                     mpz_init(encrypt_gradWeight_B[i * column + j]);
                     EncryptMul(encrypt_gradWeight_B[i * column + j], enDiff[i], mpz_input[j], n, nsquare);
-                    // 这里需要增加一个随机掩码R
-                    /* code here */
+
+                    GenRandom(R, 1024);
+                    mpz_t mask; // 加密后的R
+                    mpz_init(mask);
+                    Encryption(mask, R, g, n, nsquare);
+                    EncryptAdd(encrypt_gradWeight_B[i * column + j], encrypt_gradWeight_B[i * column + j], mask, nsquare);
+                    // A之后需要解密
+                    mpz_clear(mask);
                 }
             }
 
@@ -143,7 +153,6 @@ int main()
                 {
                     mpz_init(decrypt_gradWeight_B[i * column + j]);
                     Decryption(decrypt_gradWeight_B[i * column + j], encrypt_gradWeight_B[i * column + j], lambda, n, nsquare);
-
                     Decode(v_gradWeight_B[i][j], n, decrypt_gradWeight_B[i * column + j], true, 1e6);
                     // gmp_printf("decrypt_gradWeight_B[%d][%d] = %Zd\n", i, j, decrypt_gradWeight_B[i * column + j]);
                 }
@@ -156,8 +165,12 @@ int main()
             {
                 mpz_init(encrypt_gradBias_B[i]);
                 mpz_set(encrypt_gradBias_B[i], enDiff[i]);
-                // 这里需要增加一个随机掩码R
-                /* code here */
+                mpz_t mask; // 加密后的R
+                mpz_init(mask);
+                Encryption(mask, R, g, n, nsquare);
+                EncryptAdd(encrypt_gradBias_B[i], encrypt_gradBias_B[i], mask, nsquare);
+                // A之后需要解密
+                mpz_clear(mask);
             }
 
             // 解密解码在B计算bias的梯度
@@ -165,7 +178,6 @@ int main()
             std::vector<float> v_gradBias_B(row);
             for (int i = 0; i < row; ++i)
             {
-
                 mpz_init(decrypt_gradBias_B[i]);
                 Decryption(decrypt_gradBias_B[i], encrypt_gradBias_B[i], lambda, n, nsquare);
                 Decode(v_gradBias_B[i], n, decrypt_gradBias_B[i], true, 1e6);
@@ -177,10 +189,13 @@ int main()
             torch::Tensor gradBias_B = torch::from_blob(v_gradBias_B.data(), {row}, opts).clone();
 
             // 更新模型A
+            // 1. 解密加了掩码后的梯度值
+            // 2. 把解密后的梯度+掩码传给B
             myBackward::SGD_UpdateWeight(gradWeight_A, PartyA->fc1->weight, lr);
             myBackward::SGD_UpdateBias(gradBias_A, PartyA->fc1->bias, lr);
 
             // 更新模型B
+            // 1. B减去掩码
             myBackward::SGD_UpdateWeight(gradWeight_B, PartyB->fc1->weight, lr);
             myBackward::SGD_UpdateBias(gradBias_B, PartyB->fc1->bias, lr);
 

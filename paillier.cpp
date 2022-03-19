@@ -180,3 +180,18 @@ void Decode(float &res, mpz_ptr n, mpz_ptr plain, bool isMul, int scale_factor =
     mpz_clear(max_int);     // n/3
     mpz_clear(forNegative); // 2n/3
 }
+
+// 生成随机掩码
+void GenRandom(mpz_ptr res, int bits)
+{
+    // Random State
+    clock_t time = clock();
+    gmp_randstate_t grt;
+    gmp_randinit_default(grt);
+    gmp_randseed_ui(grt, time);
+
+    // Generate a random number R
+    mpz_urandomb(res, grt, bits);
+    mpz_setbit(res, bits);
+    mpz_nextprime(res, res);
+}
