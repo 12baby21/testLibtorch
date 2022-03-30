@@ -2,32 +2,10 @@
 #define _UTIL_H_
 #include <torch/torch.h>
 #include <gmp.h>
+#include <gmpxx.h>
+#include <vector>
 
-// Backward function
-class myBackward
-{
-private:
-    double learning_rate;
-
-public:
-    myBackward() = default;
-    ~myBackward() = default;
-
-    static torch::Tensor calGrad_weight(const torch::Tensor &pred,
-                                        const torch::Tensor &diff,
-                                        const torch::Tensor &input);
-
-    static torch::Tensor calGrad_bias(const torch::Tensor &pred,
-                                      const torch::Tensor &diff);
-
-    static void SGD_UpdateWeight(const torch::Tensor &gradWeight,
-                                 torch::Tensor &weight,
-                                 double learning_rate);
-
-    static void SGD_UpdateBias(const torch::Tensor &gradBias,
-                               torch::Tensor &bias,
-                               double learning_rate);
-};
+using namespace std;
 
 // Define a new Module.
 class Net : public torch::nn::Module
@@ -45,8 +23,11 @@ public:
     {
         // Use one of many tensor manipulation functions.
         x = fc1->forward(x.reshape({x.size(0), 784}));
-        x = sigmoid(x);
-        return x;
+        auto y = x / 100;
+        std::cout << x.sizes() << std::endl;
+        std::cout << x << std::endl;
+        y = sigmoid(y);
+        return y;
     }
 
     // Use one of many "standard library" modules.
@@ -54,5 +35,11 @@ public:
     torch::nn::Sigmoid sigmoid{nullptr};
 };
 
+void myLinear(vector<float> &fc_out, vector<float> &x, vector<float> &weight, vector<float> &bias);
+void mySigmoid(vector<float> &out, vector<float> &fc_out);
+void mySGDUpdateWeight(vector<float>& weight, vector<float>& grad, float lr);
+void mySGDUpdateBias(vector<float>& bias, vector<float>& grad, float lr);
+void myCalGradWeight(vector<float> &gradWeight, vector<float> &diff, vector<float> &input);
+void myCalGradBias(vector<float> &gradBias, vector<float> diff);
 
 #endif

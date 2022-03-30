@@ -5,10 +5,13 @@
 #include <gmpxx.h>
 #include "util.h"
 #include "paillier.h"
+#include <ctime>
+#include <chrono>
+#include <thread>
 
 using namespace std;
 using namespace torch::autograd;
-
+using namespace std::chrono;
 #define mnist torch::data::datasets::MNIST
 
 // global variables
@@ -31,29 +34,35 @@ int main()
     auto PartyA = std::make_shared<Net>();
     auto PartyB = std::make_shared<Net>();
 
-    // partial
-    double partial = 0.5;
-
+    std::vector<float> weightA(PartyA->fc1->weight.data_ptr<float>(), PartyA->fc1->weight.data_ptr<float>() + PartyA->fc1->weight.numel());
+    std::vector<float> biasA(PartyA->fc1->bias.data_ptr<float>(), PartyA->fc1->bias.data_ptr<float>() + PartyA->fc1->bias.numel());
+    std::vector<float> weightB(PartyB->fc1->weight.data_ptr<float>(), PartyB->fc1->weight.data_ptr<float>() + PartyB->fc1->weight.numel());
+    std::vector<float> biasB(PartyB->fc1->bias.data_ptr<float>(), PartyB->fc1->bias.data_ptr<float>() + PartyB->fc1->bias.numel());
     // Create data loader.
     auto data_loader = torch::data::make_data_loader(
         mnist("../data").map(torch::data::transforms::Stack<>()));
-    auto test_loader = torch::data::make_data_loader(
-        mnist("/home/wjf/Desktop/testLibtorch/data", mnist::Mode::kTest).map(torch::data::transforms::Stack<>()));
-
     std::ofstream sfile("../trainLog.txt", ios::out);
     double lr = 0.005;
 
+    // Options
+    at::TensorOptions opts = at::TensorOptions().dtype(torch::kFloat32);
+
     for (size_t epoch = 1; epoch <= 1; ++epoch)
     {
-        // 这里需要增加一个随机掩码R
+        // 随机掩码R
+        // 必须保存在全局，才能计算出来
         mpz_t R;
         mpz_init(R);
+        GenRandom(R, 512);
 
         float lossSum = 0;
         size_t batch_index = 0;
         // Iterate the data loader to yield batches from the dataset.
         for (auto &batch : *data_loader)
         {
+            // 处理输入
+            std::vector<float> v_input(batch.data.data_ptr<float>(), batch.data.data_ptr<float>() + batch.data.numel());
+
             ++batch_index;
 
             // Modify the label to 0 & 1
@@ -63,103 +72,103 @@ int main()
             myTarget[0] = newLabel;
 
             // Execute the model on the input data.
-            auto predictionA = PartyA->forward(batch.data);
-            auto predictionB = PartyB->forward(batch.data);
-
-            // 此处省略了PartyB把预测值传给PartyA
-
-            // partyA的预测值+partyB的预测值
-            auto newPrediction = partial * predictionA + (1 - partial) * predictionB;
+            vector<float> fc_outA(2);
+            vector<float> fc_outB(2);
+            vector<float> prediction(2);
+            myLinear(fc_outA, v_input, weightA, biasA);
+            mySigmoid(fc_outA, fc_outA);
+            myLinear(fc_outB, v_input, weightB, biasB);
+            mySigmoid(fc_outB, fc_outB);
+            for(int i = 0; i < 2; ++i) {
+                prediction[i] = 0.5 * fc_outA[i] + 0.5 * fc_outB[i];
+            }
+            
+            torch::Tensor integreated_prediction = torch::from_blob(prediction.data(), {1, 2}, opts).clone();
 
             // 计算loss
-            auto loss = torch::cross_entropy_loss(newPrediction, myTarget);
+            auto loss = torch::cross_entropy_loss(integreated_prediction, myTarget);
             lossSum += loss.item<float>();
 
             // 加密(label - newPrediction)并传给B
-            torch::Tensor diff = torch::zeros({1, 2});
-            torch::Tensor correct = torch::zeros({1, 2}).toType(torch::kLong);
+            vector<long> correct(2);
             if (newLabel == 1)
-                correct[0][1] = 1;
+                correct[1] = 1;
             else
-                correct[0][0] = 1;
-            diff = correct - newPrediction; // sizes = {1, 2}
+                correct[0] = 1;
+            vector<float> diff(2);
+            diff[0] = correct[0] - prediction[0];
+            diff[1] = correct[1] - prediction[1];
+            diff[0] = -diff[0];
+            diff[1] = -diff[1];
+
+            // 计算参与方A的梯度
+            vector<float> gradWeightA(784*2);
+            vector<float> gradBiasA(2);
+            myCalGradWeight(gradWeightA, diff, v_input);
+            myCalGradBias(gradBiasA, diff);
+
 
             // PartyA把diff加密后传给B
-            float diff_0 = diff[0][0].item<float>();
-            float diff_1 = diff[0][1].item<float>();
+            auto start_time = system_clock::now();
             mpz_t enDiff_0; // 编码后的第0维数据
             mpz_init(enDiff_0);
             mpz_t enDiff_1; // 编码后的第1维数据
             mpz_init(enDiff_1);
-            Encode(enDiff_0, n, diff_0, 1e6);
-            Encode(enDiff_1, n, diff_1, 1e6);
+            Encode(enDiff_0, n, diff[0], 1e6);
+            Encode(enDiff_1, n, diff[1], 1e6);
             std::vector<mpz_ptr> enDiff = {enDiff_0, enDiff_1};
-            // gmp_printf("diff[0] = %f\ndiff[1] = %f\n", diff_0, diff_1);
 
             for (int i = 0; i < enDiff.size(); ++i)
             {
                 Encryption(enDiff[i], enDiff[i], g, n, nsquare);
-                // Decryption(enDiff[i], enDiff[i], lambda, n, nsquare);
-                // gmp_printf("enDiff[%d] = %Zd\n", i, enDiff[i]);
-                // float tmp;
-                // Decode(tmp, n, enDiff[i], false, 1e6);
-                // cout << tmp << endl;
             }
+            auto end_time = system_clock::now();
+            auto duration = duration_cast<microseconds>(end_time - start_time);
+            printf("Encrypt diff took %lf s.\n", double(duration.count()) * microseconds::period::num / microseconds::period::den);
 
-            std::vector<float> v_input(batch.data.data_ptr<float>(), batch.data.data_ptr<float>() + batch.data.numel());
             int row = enDiff.size(), column = v_input.size();
             std::vector<mpz_t> mpz_input(column);
-            // init mpz_input
             for (int i = 0; i < column; ++i)
             {
                 mpz_init(mpz_input[i]);
                 Encode(mpz_input[i], n, v_input[i], 1e6);
             }
-            /**
-             * HERE
-             * CORRECT!
-             */
 
-            // 计算A的梯度
-            auto gradWeight_A = myBackward::calGrad_weight(newPrediction, diff, batch.data);
-            auto gradBias_A = myBackward::calGrad_bias(newPrediction, diff);
-
-            // 1. 计算Bweight的梯度(加密后)
-            // 计算梯度w时没有乘以-1!
+            start_time = system_clock::now();
+            // 1.B根据Encrypt(diff)计算加密后weight的梯度，并添加随机掩码R
+            // mask = Encrypt(R)
+            // EncryptMul改成多线程？
             std::vector<mpz_t> encrypt_gradWeight_B(row * column);
+            // for (int i = 0; i < row; ++i)
+            // {
+            //     multiEncryptMul(encrypt_gradWeight_B, enDiff[i], mpz_input, n, nsquare, i * column);
+            // }
+            thread p1(multiEncryptMul, std::ref(encrypt_gradWeight_B), enDiff[0], std::ref(mpz_input), n, nsquare, 0);
+            thread p2(multiEncryptMul, std::ref(encrypt_gradWeight_B), enDiff[1], std::ref(mpz_input), n, nsquare, column);
+            p1.join();
+            p2.join();
             for (int i = 0; i < row; ++i)
             {
+                mpz_t mask; // 加密后的R
+                mpz_init(mask);
+                Encryption(mask, R, g, n, nsquare);
                 for (int j = 0; j < column; ++j)
                 {
-                    mpz_init(encrypt_gradWeight_B[i * column + j]);
-                    EncryptMul(encrypt_gradWeight_B[i * column + j], enDiff[i], mpz_input[j], n, nsquare);
 
-                    GenRandom(R, 1024);
-                    mpz_t mask; // 加密后的R
-                    mpz_init(mask);
-                    Encryption(mask, R, g, n, nsquare);
-                    EncryptAdd(encrypt_gradWeight_B[i * column + j], encrypt_gradWeight_B[i * column + j], mask, nsquare);
-                    // A之后需要解密
-                    mpz_clear(mask);
+                    for (int j = 0; j < column; ++j)
+                    {
+                        EncryptAdd(encrypt_gradWeight_B[i * column + j], encrypt_gradWeight_B[i * column + j], mask, nsquare);
+                    }
                 }
+                mpz_clear(mask);
             }
+            end_time = system_clock::now();
+            duration = duration_cast<microseconds>(end_time - start_time);
+            printf("B calculate grads of weight using encrypted data took %lf s.\n", double(duration.count()) * microseconds::period::num / microseconds::period::den);
+            start_time = system_clock::now();
 
-            // 解密解码在B计算weight的梯度
-            std::vector<mpz_t> decrypt_gradWeight_B(row * column);
-            std::vector<std::vector<float>> v_gradWeight_B(row, std::vector<float>(column, 0));
-            for (int i = 0; i < row; ++i)
-            {
-                for (int j = 0; j < column; ++j)
-                {
-                    mpz_init(decrypt_gradWeight_B[i * column + j]);
-                    Decryption(decrypt_gradWeight_B[i * column + j], encrypt_gradWeight_B[i * column + j], lambda, n, nsquare);
-                    Decode(v_gradWeight_B[i][j], n, decrypt_gradWeight_B[i * column + j], true, 1e6);
-                    // gmp_printf("decrypt_gradWeight_B[%d][%d] = %Zd\n", i, j, decrypt_gradWeight_B[i * column + j]);
-                }
-            }
-
-            // 2. 计算Bbias的梯度(加密后)
-            // 计算梯度bias时没有乘以-1!
+            // 1.B根据Encrypt(diff)计算加密后bias的梯度，并添加随机掩码R
+            // mask = Encrypt(R)
             std::vector<mpz_t> encrypt_gradBias_B(row);
             for (int i = 0; i < row; ++i)
             {
@@ -172,76 +181,102 @@ int main()
                 // A之后需要解密
                 mpz_clear(mask);
             }
+            end_time = system_clock::now();
+            duration = duration_cast<microseconds>(end_time - start_time);
+            printf("B calculate grads of bias using encrypted data took %lf s.\n", double(duration.count()) * microseconds::period::num / microseconds::period::den);
 
-            // 解密解码在B计算bias的梯度
+            start_time = system_clock::now();
+            // 2. 把B计算weight的梯度传输给A进行解密，并传回给B
+            std::vector<mpz_t> decrypt_gradWeight_B(row * column);
+            thread pt1(multiDecryption, std::ref(decrypt_gradWeight_B), std::ref(encrypt_gradWeight_B), lambda, n, nsquare, 0 * column);
+            thread pt2(multiDecryption, std::ref(decrypt_gradWeight_B), std::ref(encrypt_gradWeight_B), lambda, n, nsquare, 0.25 * column);
+            thread pt3(multiDecryption, std::ref(decrypt_gradWeight_B), std::ref(encrypt_gradWeight_B), lambda, n, nsquare, 0.5 * column);
+            thread pt4(multiDecryption, std::ref(decrypt_gradWeight_B), std::ref(encrypt_gradWeight_B), lambda, n, nsquare, 0.75 * column);
+            thread pt5(multiDecryption, std::ref(decrypt_gradWeight_B), std::ref(encrypt_gradWeight_B), lambda, n, nsquare, 1 * column);
+            thread pt6(multiDecryption, std::ref(decrypt_gradWeight_B), std::ref(encrypt_gradWeight_B), lambda, n, nsquare, 1.25 * column);
+            thread pt7(multiDecryption, std::ref(decrypt_gradWeight_B), std::ref(encrypt_gradWeight_B), lambda, n, nsquare, 1.5 * column);
+            thread pt8(multiDecryption, std::ref(decrypt_gradWeight_B), std::ref(encrypt_gradWeight_B), lambda, n, nsquare, 1.75 * column);
+            pt1.join();
+            pt2.join();
+            pt3.join();
+            pt4.join();
+            pt5.join();
+            pt6.join();
+            pt7.join();
+            pt8.join();
+
+            // 2. 把B计算bias的梯度传输给A进行解密，并传回给B
             std::vector<mpz_t> decrypt_gradBias_B(row);
-            std::vector<float> v_gradBias_B(row);
             for (int i = 0; i < row; ++i)
             {
                 mpz_init(decrypt_gradBias_B[i]);
                 Decryption(decrypt_gradBias_B[i], encrypt_gradBias_B[i], lambda, n, nsquare);
-                Decode(v_gradBias_B[i], n, decrypt_gradBias_B[i], true, 1e6);
                 // gmp_printf("decrypt_gradWeight_B[%d][%d] = %Zd\n", i, j, decrypt_gradWeight_B[i * column + j]);
             }
+            end_time = system_clock::now();
+            duration = duration_cast<microseconds>(end_time - start_time);
+            printf("A decrypt grads took %lf s.\n", double(duration.count()) * microseconds::period::num / microseconds::period::den);
 
-            at::TensorOptions opts = at::TensorOptions().dtype(torch::kFloat32);
-            torch::Tensor gradWeight_B = torch::from_blob(v_gradWeight_B.data(), {row, column}, opts).clone();
-            torch::Tensor gradBias_B = torch::from_blob(v_gradBias_B.data(), {row}, opts).clone();
+            start_time = system_clock::now();
+            // 3. 减去随机掩码并解码 weight
+            std::vector<std::vector<float>> v_gradWeight_B(row, std::vector<float>(column, 0));
+            for (int i = 0; i < row; ++i)
+            {
+                for (int j = 0; j < column; ++j)
+                {
+                    mpz_sub(decrypt_gradWeight_B[i * column + j], decrypt_gradWeight_B[i * column + j], R);
+                    Decode(v_gradWeight_B[i][j], n, decrypt_gradWeight_B[i * column + j], true, 1e6);
+                    // printf("v_gradWeight_B[%d][%d] = %f ", i, j, v_gradWeight_B[i][j]);
+                }
+            }
+            std::vector<float> gradWeightB(row * column);
+            for (int i = 0; i < row; ++i)
+            {
+                for (int j = 0; j < column; ++j)
+                {
+                    gradWeightB[i * column + j] = v_gradWeight_B[i][j];
+                }
+            }
+
+            // 3. 减去随机掩码并解码 bias
+            std::vector<float> v_gradBias_B(row);
+            for (int i = 0; i < row; ++i)
+            {
+                mpz_sub(decrypt_gradBias_B[i], decrypt_gradBias_B[i], R);
+                Decode(v_gradBias_B[i], n, decrypt_gradBias_B[i], true, 1e6);
+            }
+            end_time = system_clock::now();
+            duration = duration_cast<microseconds>(end_time - start_time);
+            printf("B get grads took %lf s.\n", double(duration.count()) * microseconds::period::num / microseconds::period::den);
+
 
             // 更新模型A
-            // 1. 解密加了掩码后的梯度值
-            // 2. 把解密后的梯度+掩码传给B
-            myBackward::SGD_UpdateWeight(gradWeight_A, PartyA->fc1->weight, lr);
-            myBackward::SGD_UpdateBias(gradBias_A, PartyA->fc1->bias, lr);
+            mySGDUpdateWeight(weightA, gradWeightA, lr);
+            mySGDUpdateBias(biasA, gradBiasA, lr);
 
             // 更新模型B
-            // 1. B减去掩码
-            myBackward::SGD_UpdateWeight(gradWeight_B, PartyB->fc1->weight, lr);
-            myBackward::SGD_UpdateBias(gradBias_B, PartyB->fc1->bias, lr);
+            mySGDUpdateWeight(weightB, gradWeightB, lr);
+            mySGDUpdateBias(biasB, v_gradBias_B, lr);
 
             // Output the loss and checkpoint every 100 batches.
-            if (batch_index % 10000 == 0)
+            if (batch_index % 1 == 0)
             {
                 cout << "We have trained " << epoch << " epochs..." << endl;
                 sfile << "Epoch: " << epoch << " | Batch: " << batch_index
                       << " | Average Loss: " << lossSum / batch_index << std::endl;
+
+                // Print parameters
+                ofstream para("../parameters.txt", ios::out);
+                for (const auto &pair : PartyB->named_parameters())
+                {
+                    para << pair.key() << ": " << pair.value() << endl;
+                }
+                para.close();
             }
         }
 
-        // Test after one epoch
-        int correct = 0;
-        for (auto &testBatch : *test_loader)
-        {
-            auto myTestTarget = torch::zeros({1}).toType(torch::kLong);
-            int testLabel = testBatch.target.item<int>();
-            if (testLabel % 2 == 1)
-            {
-                myTestTarget[0] = 1;
-            }
-
-            auto pred = PartyA->forward(testBatch.data);
-
-            // Get the maximum index
-            pred.squeeze_();
-            torch::Tensor ans = torch::argmax(pred);
-
-            // Calculate accuracy
-            bool flag = (ans.item<int>() == myTestTarget.item<int>());
-            if (flag)
-            {
-                correct += 1;
-            }
-        }
-        sfile << "accuracy: " << 1.0 * correct / 10000 << endl;
+        mpz_clear(R);
     }
-
-    // Print parameters
-    ofstream para("../parameters.txt", ios::out);
-    for (const auto &pair : PartyA->named_parameters())
-    {
-        para << pair.key() << ": " << pair.value() << endl;
-    }
-    para.close();
 
     sfile.close();
     return 0;

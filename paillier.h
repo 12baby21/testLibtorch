@@ -16,5 +16,6 @@ void EncryptMul(mpz_ptr res, mpz_ptr c, mpz_ptr m, mpz_ptr n, mpz_ptr nsquare);
 void Encode(mpz_ptr res, mpz_ptr n, float scalar, int scale = 1e6);
 void Decode(float &res, mpz_ptr n, mpz_ptr plain, bool isMul, int scale_factor = 1e6);
 void GenRandom(mpz_ptr res, int bits);
-
+void multiEncryptMul(std::vector<mpz_t>& res, const mpz_ptr c, std::vector<mpz_t>& m, const mpz_ptr n, const mpz_ptr nsquare, int start);
+void multiDecryption(std::vector<mpz_t>& res, std::vector<mpz_t>& c, mpz_ptr lambda, mpz_ptr n, mpz_ptr nsquare, int start);
 #endif

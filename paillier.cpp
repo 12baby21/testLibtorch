@@ -5,8 +5,11 @@
 #include <time.h>
 #include <gmpxx.h>
 #include <vector>
+#include <thread>
 
 using namespace std;
+
+#define NUM_THREADS 8       // 线程数
 
 void GenKey(mp_bitcnt_t bits, mpz_ptr n, mpz_ptr g, mpz_ptr lambda, mpz_ptr mu, mpz_ptr n_2)
 {
@@ -194,4 +197,24 @@ void GenRandom(mpz_ptr res, int bits)
     mpz_urandomb(res, grt, bits);
     mpz_setbit(res, bits);
     mpz_nextprime(res, res);
+}
+
+
+void multiEncryptMul(std::vector<mpz_t>& res, mpz_ptr c, std::vector<mpz_t>& m, const mpz_ptr n, const mpz_ptr nsquare, int start)
+{
+    int op_num = m.size();
+    for(int i = 0; i < op_num; ++i)
+    {
+        mpz_init(res[start+i]);
+        EncryptMul(res[start+i], c, m[i], n, nsquare);
+    }
+}
+
+void multiDecryption(std::vector<mpz_t>& res, std::vector<mpz_t>& c, mpz_ptr lambda, mpz_ptr n, mpz_ptr nsquare, int start)
+{
+    for(int i = 0; i < 196; ++i)
+    {
+        mpz_init(res[start+i]);
+        Decryption(res[start+i], c[start+i], lambda, n, nsquare);
+    }
 }

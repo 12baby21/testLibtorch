@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/wjf/Desktop/testLibtorch
+CMAKE_SOURCE_DIR = /home/wjf/Desktop/multi_thread_torch
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/wjf/Desktop/testLibtorch/build
+CMAKE_BINARY_DIR = /home/wjf/Desktop/multi_thread_torch/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -80,9 +80,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wjf/Desktop/testLibtorch/build/CMakeFiles /home/wjf/Desktop/testLibtorch/build/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wjf/Desktop/multi_thread_torch/build/CMakeFiles /home/wjf/Desktop/multi_thread_torch/build/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wjf/Desktop/testLibtorch/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wjf/Desktop/multi_thread_torch/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target

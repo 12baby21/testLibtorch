@@ -90,6 +90,9 @@
     "typeindex": "cpp",
     "typeinfo": "cpp",
     "valarray": "cpp",
-    "variant": "cpp"
-  }
+    "variant": "cpp",
+    "codecvt": "cpp",
+    "__nullptr": "cpp"
+  },
+  "C_Cpp.errorSquiggles": "Enabled"
 }

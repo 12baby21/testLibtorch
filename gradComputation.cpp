@@ -3,38 +3,67 @@
 #include <vector>
 #include "util.h"
 #include "paillier.h"
-
+#include <cmath>
 extern mpz_t nsquare;
 extern mpz_t n;
 extern mpz_t lambda;
 
-torch::Tensor myBackward::calGrad_weight(const torch::Tensor &pred,
-                                         const torch::Tensor &diff,
-                                         const torch::Tensor &input)
+void myLinear(vector<float> &fc_out, vector<float> &x, vector<float> &weight, vector<float> &bias)
 {
-    auto gradWeight = -1 * torch::mm(diff.t(), input.reshape({input.size(0), 784}));
-
-    return gradWeight;
+    int m = fc_out.size();
+    int n = x.size();
+    for (int i = 0; i < m; ++i)
+    {
+        float tmp = 0;
+        for (int j = 0; j < n; ++j)
+        {
+            tmp += weight[i * n + j] * x[j];
+        }
+        tmp += bias[i];
+        fc_out[i] = tmp;
+    }
 }
 
-torch::Tensor myBackward::calGrad_bias(const torch::Tensor &pred,
-                                       const torch::Tensor &diff)
+void mySigmoid(vector<float> &out, vector<float> &fc_out)
 {
-    auto gradBias = -1 * diff.squeeze();
-
-    return gradBias;
+    for (int i = 0; i < out.size(); ++i)
+        out[i] = 1 / (1 + exp(-fc_out[i]));
 }
 
-void myBackward::SGD_UpdateWeight(const torch::Tensor &gradWeight,
-                                  torch::Tensor &weight,
-                                  double learning_rate = 0.1)
+void mySGDUpdateWeight(vector<float> &weight, vector<float> &grad, float lr)
 {
-    weight = weight - learning_rate * gradWeight;
+    for (int i = 0; i < weight.size(); ++i)
+    {
+        weight[i] = weight[i] - lr * grad[i];
+    }
 }
 
-void myBackward::SGD_UpdateBias(const torch::Tensor &gradBias,
-                                torch::Tensor &bias,
-                                double learning_rate = 0.1)
+void mySGDUpdateBias(vector<float> &bias, vector<float> &grad, float lr)
 {
-    bias = bias - learning_rate * gradBias;
+    for (int i = 0; i < bias.size(); ++i)
+    {
+        bias[i] = bias[i] - lr * grad[i];
+    }
+}
+
+void myCalGradWeight(vector<float> &gradWeight, vector<float> &diff, vector<float> &input)
+{
+    int m = diff.size();
+    int n = input.size();
+    for (int i = 0; i < m; ++i)
+    {
+        for (int j = 0; j < n; ++j)
+        {
+            gradWeight[i * n + j] = -diff[i] * input[i];
+        }
+    }
+}
+
+void myCalGradBias(vector<float> &gradBias, vector<float> diff)
+{
+    int n = diff.size();
+    for(int i = 0; i < n; ++ i)
+    {
+        gradBias[i] = -diff[i];
+    }
 }
