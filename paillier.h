@@ -8,14 +8,14 @@
 
 using namespace std;
 
-void GenKey(mp_bitcnt_t bits, mpz_ptr n, mpz_ptr g, mpz_ptr lambda, mpz_ptr mu, mpz_ptr n_2);
-void Encryption(mpz_ptr c, mpz_ptr m, mpz_ptr g, mpz_ptr n, mpz_ptr n_2);
-void Decryption(mpz_ptr res, mpz_ptr c, mpz_ptr lambda, mpz_ptr n, mpz_ptr n_2);
-void EncryptAdd(mpz_ptr res, mpz_ptr c1, mpz_ptr c2, mpz_ptr n_2);
-void EncryptMul(mpz_ptr res, mpz_ptr c, mpz_ptr m, mpz_ptr n, mpz_ptr nsquare);
-void Encode(mpz_ptr res, mpz_ptr n, float scalar, int scale = 1e6);
-void Decode(float &res, mpz_ptr n, mpz_ptr plain, bool isMul, int scale_factor = 1e6);
-void GenRandom(mpz_ptr res, int bits);
-void multiEncryptMul(std::vector<mpz_t>& res, const mpz_ptr c, std::vector<mpz_t>& m, const mpz_ptr n, const mpz_ptr nsquare, int start);
-void multiDecryption(std::vector<mpz_t>& res, std::vector<mpz_t>& c, mpz_ptr lambda, mpz_ptr n, mpz_ptr nsquare, int start);
+mpz_class GenRandomPrime(mp_bitcnt_t bits);
+void GenKey(mp_bitcnt_t bits, mpz_class &n, mpz_class &g, mpz_class &lambda, mpz_class &mu, mpz_class &nsquare);
+void Encryption(mpz_class& c, mpz_class& m);
+void Decryption(mpz_class& res, mpz_class& c);
+void EncryptAdd(mpz_class& res, mpz_class& c1, mpz_class& c2);
+void EncryptMul(mpz_class& res, mpz_class& c, mpz_class& m);
+void Encode(mpz_class& res, float scalar, const unsigned scale = 1e6);
+void Decode(float &res, mpz_class plain, bool isMul, int scale_factor = 1e6);
+void multiEncryptMul(std::vector<mpz_class>& res, mpz_class& c, std::vector<mpz_class>& m, int startIndex, int endIndex);
+void multiDecryption(std::vector<mpz_class>& res, std::vector<mpz_class>& c, int startIndex, int endIndex);
 #endif

@@ -50,11 +50,12 @@ void myCalGradWeight(vector<float> &gradWeight, vector<float> &diff, vector<floa
 {
     int m = diff.size();
     int n = input.size();
+
     for (int i = 0; i < m; ++i)
     {
         for (int j = 0; j < n; ++j)
         {
-            gradWeight[i * n + j] = -diff[i] * input[i];
+            gradWeight[i * n + j] = diff[i] * input[j];
         }
     }
 }
@@ -64,6 +65,6 @@ void myCalGradBias(vector<float> &gradBias, vector<float> diff)
     int n = diff.size();
     for(int i = 0; i < n; ++ i)
     {
-        gradBias[i] = -diff[i];
+        gradBias[i] = diff[i];
     }
 }
