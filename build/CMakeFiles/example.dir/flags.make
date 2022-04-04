@@ -6,5 +6,5 @@ CXX_FLAGS =  -D_GLIBCXX_USE_CXX11_ABI=0 -g   -D_GLIBCXX_USE_CXX11_ABI=0 -std=c++
 
 CXX_DEFINES = -DUSE_C10D_GLOO -DUSE_C10D_NCCL -DUSE_DISTRIBUTED -DUSE_RPC -DUSE_TENSORPIPE
 
-CXX_INCLUDES = -isystem /home/wjf/libtorch/include -isystem /home/wjf/libtorch/include/torch/csrc/api/include -isystem /usr/local/cuda-11.4/include 
+CXX_INCLUDES = -I/home/wjf/Desktop/multi_thread_torch/./include -isystem /home/wjf/libtorch/include -isystem /home/wjf/libtorch/include/torch/csrc/api/include -isystem /usr/local/cuda-11.4/include 
 

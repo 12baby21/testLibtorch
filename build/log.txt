@@ -1,6 +1,0 @@
-Epoch: 1 | Batch: 10000 | Average Loss: 0.690956
-Epoch: 1 | Batch: 20000 | Average Loss: 0.690525
-Epoch: 1 | Batch: 30000 | Average Loss: 0.69032
-Epoch: 1 | Batch: 40000 | Average Loss: 0.69029
-Epoch: 1 | Batch: 50000 | Average Loss: 0.690364
-Epoch: 1 | Batch: 60000 | Average Loss: 0.690305

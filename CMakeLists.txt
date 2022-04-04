@@ -12,8 +12,9 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # main.cpp
-aux_source_directory(./ SOURCE_DIR)
-add_executable(example ${SOURCE_DIR})
+aux_source_directory(./src SOURCE_DIR)
+add_executable(example example.cpp ${SOURCE_DIR})
+include_directories(./include)
 
 # link libtorch .a .so
 target_link_libraries(example "${TORCH_LIBRARIES}")

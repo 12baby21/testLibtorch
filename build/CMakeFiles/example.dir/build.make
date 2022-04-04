@@ -70,44 +70,59 @@ CMakeFiles/example.dir/example.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/example.dir/example.cpp.s"
 	/usr/bin/x86_64-linux-gnu-g++-9 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/wjf/Desktop/multi_thread_torch/example.cpp -o CMakeFiles/example.dir/example.cpp.s
 
-CMakeFiles/example.dir/gradComputation.cpp.o: CMakeFiles/example.dir/flags.make
-CMakeFiles/example.dir/gradComputation.cpp.o: ../gradComputation.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/wjf/Desktop/multi_thread_torch/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/example.dir/gradComputation.cpp.o"
-	/usr/bin/x86_64-linux-gnu-g++-9  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/example.dir/gradComputation.cpp.o -c /home/wjf/Desktop/multi_thread_torch/gradComputation.cpp
+CMakeFiles/example.dir/src/gradComputation.cpp.o: CMakeFiles/example.dir/flags.make
+CMakeFiles/example.dir/src/gradComputation.cpp.o: ../src/gradComputation.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/wjf/Desktop/multi_thread_torch/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/example.dir/src/gradComputation.cpp.o"
+	/usr/bin/x86_64-linux-gnu-g++-9  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/example.dir/src/gradComputation.cpp.o -c /home/wjf/Desktop/multi_thread_torch/src/gradComputation.cpp
 
-CMakeFiles/example.dir/gradComputation.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/example.dir/gradComputation.cpp.i"
-	/usr/bin/x86_64-linux-gnu-g++-9 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/wjf/Desktop/multi_thread_torch/gradComputation.cpp > CMakeFiles/example.dir/gradComputation.cpp.i
+CMakeFiles/example.dir/src/gradComputation.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/example.dir/src/gradComputation.cpp.i"
+	/usr/bin/x86_64-linux-gnu-g++-9 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/wjf/Desktop/multi_thread_torch/src/gradComputation.cpp > CMakeFiles/example.dir/src/gradComputation.cpp.i
 
-CMakeFiles/example.dir/gradComputation.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/example.dir/gradComputation.cpp.s"
-	/usr/bin/x86_64-linux-gnu-g++-9 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/wjf/Desktop/multi_thread_torch/gradComputation.cpp -o CMakeFiles/example.dir/gradComputation.cpp.s
+CMakeFiles/example.dir/src/gradComputation.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/example.dir/src/gradComputation.cpp.s"
+	/usr/bin/x86_64-linux-gnu-g++-9 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/wjf/Desktop/multi_thread_torch/src/gradComputation.cpp -o CMakeFiles/example.dir/src/gradComputation.cpp.s
 
-CMakeFiles/example.dir/paillier.cpp.o: CMakeFiles/example.dir/flags.make
-CMakeFiles/example.dir/paillier.cpp.o: ../paillier.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/wjf/Desktop/multi_thread_torch/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/example.dir/paillier.cpp.o"
-	/usr/bin/x86_64-linux-gnu-g++-9  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/example.dir/paillier.cpp.o -c /home/wjf/Desktop/multi_thread_torch/paillier.cpp
+CMakeFiles/example.dir/src/paillier.cpp.o: CMakeFiles/example.dir/flags.make
+CMakeFiles/example.dir/src/paillier.cpp.o: ../src/paillier.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/wjf/Desktop/multi_thread_torch/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/example.dir/src/paillier.cpp.o"
+	/usr/bin/x86_64-linux-gnu-g++-9  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/example.dir/src/paillier.cpp.o -c /home/wjf/Desktop/multi_thread_torch/src/paillier.cpp
 
-CMakeFiles/example.dir/paillier.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/example.dir/paillier.cpp.i"
-	/usr/bin/x86_64-linux-gnu-g++-9 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/wjf/Desktop/multi_thread_torch/paillier.cpp > CMakeFiles/example.dir/paillier.cpp.i
+CMakeFiles/example.dir/src/paillier.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/example.dir/src/paillier.cpp.i"
+	/usr/bin/x86_64-linux-gnu-g++-9 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/wjf/Desktop/multi_thread_torch/src/paillier.cpp > CMakeFiles/example.dir/src/paillier.cpp.i
 
-CMakeFiles/example.dir/paillier.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/example.dir/paillier.cpp.s"
-	/usr/bin/x86_64-linux-gnu-g++-9 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/wjf/Desktop/multi_thread_torch/paillier.cpp -o CMakeFiles/example.dir/paillier.cpp.s
+CMakeFiles/example.dir/src/paillier.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/example.dir/src/paillier.cpp.s"
+	/usr/bin/x86_64-linux-gnu-g++-9 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/wjf/Desktop/multi_thread_torch/src/paillier.cpp -o CMakeFiles/example.dir/src/paillier.cpp.s
+
+CMakeFiles/example.dir/src/readMnist.cpp.o: CMakeFiles/example.dir/flags.make
+CMakeFiles/example.dir/src/readMnist.cpp.o: ../src/readMnist.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/wjf/Desktop/multi_thread_torch/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/example.dir/src/readMnist.cpp.o"
+	/usr/bin/x86_64-linux-gnu-g++-9  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/example.dir/src/readMnist.cpp.o -c /home/wjf/Desktop/multi_thread_torch/src/readMnist.cpp
+
+CMakeFiles/example.dir/src/readMnist.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/example.dir/src/readMnist.cpp.i"
+	/usr/bin/x86_64-linux-gnu-g++-9 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/wjf/Desktop/multi_thread_torch/src/readMnist.cpp > CMakeFiles/example.dir/src/readMnist.cpp.i
+
+CMakeFiles/example.dir/src/readMnist.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/example.dir/src/readMnist.cpp.s"
+	/usr/bin/x86_64-linux-gnu-g++-9 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/wjf/Desktop/multi_thread_torch/src/readMnist.cpp -o CMakeFiles/example.dir/src/readMnist.cpp.s
 
 # Object files for target example
 example_OBJECTS = \
 "CMakeFiles/example.dir/example.cpp.o" \
-"CMakeFiles/example.dir/gradComputation.cpp.o" \
-"CMakeFiles/example.dir/paillier.cpp.o"
+"CMakeFiles/example.dir/src/gradComputation.cpp.o" \
+"CMakeFiles/example.dir/src/paillier.cpp.o" \
+"CMakeFiles/example.dir/src/readMnist.cpp.o"
 
 # External object files for target example
 example_EXTERNAL_OBJECTS =
 
 example: CMakeFiles/example.dir/example.cpp.o
-example: CMakeFiles/example.dir/gradComputation.cpp.o
-example: CMakeFiles/example.dir/paillier.cpp.o
+example: CMakeFiles/example.dir/src/gradComputation.cpp.o
+example: CMakeFiles/example.dir/src/paillier.cpp.o
+example: CMakeFiles/example.dir/src/readMnist.cpp.o
 example: CMakeFiles/example.dir/build.make
 example: /home/wjf/libtorch/lib/libtorch.so
 example: /home/wjf/libtorch/lib/libc10.so
@@ -126,7 +141,7 @@ example: /usr/local/cuda-11.4/lib64/libcudnn.so
 example: /usr/local/cuda-11.4/lib64/libnvToolsExt.so
 example: /usr/local/cuda-11.4/lib64/libcudart.so
 example: CMakeFiles/example.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/wjf/Desktop/multi_thread_torch/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable example"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/wjf/Desktop/multi_thread_torch/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable example"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/example.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

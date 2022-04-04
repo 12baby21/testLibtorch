@@ -150,59 +150,86 @@ example.cpp.s:
 	$(MAKE) -f CMakeFiles/example.dir/build.make CMakeFiles/example.dir/example.cpp.s
 .PHONY : example.cpp.s
 
-gradComputation.o: gradComputation.cpp.o
+src/gradComputation.o: src/gradComputation.cpp.o
 
-.PHONY : gradComputation.o
-
-# target to build an object file
-gradComputation.cpp.o:
-	$(MAKE) -f CMakeFiles/example.dir/build.make CMakeFiles/example.dir/gradComputation.cpp.o
-.PHONY : gradComputation.cpp.o
-
-gradComputation.i: gradComputation.cpp.i
-
-.PHONY : gradComputation.i
-
-# target to preprocess a source file
-gradComputation.cpp.i:
-	$(MAKE) -f CMakeFiles/example.dir/build.make CMakeFiles/example.dir/gradComputation.cpp.i
-.PHONY : gradComputation.cpp.i
-
-gradComputation.s: gradComputation.cpp.s
-
-.PHONY : gradComputation.s
-
-# target to generate assembly for a file
-gradComputation.cpp.s:
-	$(MAKE) -f CMakeFiles/example.dir/build.make CMakeFiles/example.dir/gradComputation.cpp.s
-.PHONY : gradComputation.cpp.s
-
-paillier.o: paillier.cpp.o
-
-.PHONY : paillier.o
+.PHONY : src/gradComputation.o
 
 # target to build an object file
-paillier.cpp.o:
-	$(MAKE) -f CMakeFiles/example.dir/build.make CMakeFiles/example.dir/paillier.cpp.o
-.PHONY : paillier.cpp.o
+src/gradComputation.cpp.o:
+	$(MAKE) -f CMakeFiles/example.dir/build.make CMakeFiles/example.dir/src/gradComputation.cpp.o
+.PHONY : src/gradComputation.cpp.o
 
-paillier.i: paillier.cpp.i
+src/gradComputation.i: src/gradComputation.cpp.i
 
-.PHONY : paillier.i
+.PHONY : src/gradComputation.i
 
 # target to preprocess a source file
-paillier.cpp.i:
-	$(MAKE) -f CMakeFiles/example.dir/build.make CMakeFiles/example.dir/paillier.cpp.i
-.PHONY : paillier.cpp.i
+src/gradComputation.cpp.i:
+	$(MAKE) -f CMakeFiles/example.dir/build.make CMakeFiles/example.dir/src/gradComputation.cpp.i
+.PHONY : src/gradComputation.cpp.i
 
-paillier.s: paillier.cpp.s
+src/gradComputation.s: src/gradComputation.cpp.s
 
-.PHONY : paillier.s
+.PHONY : src/gradComputation.s
 
 # target to generate assembly for a file
-paillier.cpp.s:
-	$(MAKE) -f CMakeFiles/example.dir/build.make CMakeFiles/example.dir/paillier.cpp.s
-.PHONY : paillier.cpp.s
+src/gradComputation.cpp.s:
+	$(MAKE) -f CMakeFiles/example.dir/build.make CMakeFiles/example.dir/src/gradComputation.cpp.s
+.PHONY : src/gradComputation.cpp.s
+
+src/paillier.o: src/paillier.cpp.o
+
+.PHONY : src/paillier.o
+
+# target to build an object file
+src/paillier.cpp.o:
+	$(MAKE) -f CMakeFiles/example.dir/build.make CMakeFiles/example.dir/src/paillier.cpp.o
+.PHONY : src/paillier.cpp.o
+
+src/paillier.i: src/paillier.cpp.i
+
+.PHONY : src/paillier.i
+
+# target to preprocess a source file
+src/paillier.cpp.i:
+	$(MAKE) -f CMakeFiles/example.dir/build.make CMakeFiles/example.dir/src/paillier.cpp.i
+.PHONY : src/paillier.cpp.i
+
+src/paillier.s: src/paillier.cpp.s
+
+.PHONY : src/paillier.s
+
+# target to generate assembly for a file
+src/paillier.cpp.s:
+	$(MAKE) -f CMakeFiles/example.dir/build.make CMakeFiles/example.dir/src/paillier.cpp.s
+.PHONY : src/paillier.cpp.s
+
+src/readMnist.o: src/readMnist.cpp.o
+
+.PHONY : src/readMnist.o
+
+# target to build an object file
+src/readMnist.cpp.o:
+	$(MAKE) -f CMakeFiles/example.dir/build.make CMakeFiles/example.dir/src/readMnist.cpp.o
+.PHONY : src/readMnist.cpp.o
+
+src/readMnist.i: src/readMnist.cpp.i
+
+.PHONY : src/readMnist.i
+
+# target to preprocess a source file
+src/readMnist.cpp.i:
+	$(MAKE) -f CMakeFiles/example.dir/build.make CMakeFiles/example.dir/src/readMnist.cpp.i
+.PHONY : src/readMnist.cpp.i
+
+src/readMnist.s: src/readMnist.cpp.s
+
+.PHONY : src/readMnist.s
+
+# target to generate assembly for a file
+src/readMnist.cpp.s:
+	$(MAKE) -f CMakeFiles/example.dir/build.make CMakeFiles/example.dir/src/readMnist.cpp.s
+.PHONY : src/readMnist.cpp.s
 
 # Help Target
 help:
@@ -216,12 +243,15 @@ help:
 	@echo "... example.o"
 	@echo "... example.i"
 	@echo "... example.s"
-	@echo "... gradComputation.o"
-	@echo "... gradComputation.i"
-	@echo "... gradComputation.s"
-	@echo "... paillier.o"
-	@echo "... paillier.i"
-	@echo "... paillier.s"
+	@echo "... src/gradComputation.o"
+	@echo "... src/gradComputation.i"
+	@echo "... src/gradComputation.s"
+	@echo "... src/paillier.o"
+	@echo "... src/paillier.i"
+	@echo "... src/paillier.s"
+	@echo "... src/readMnist.o"
+	@echo "... src/readMnist.i"
+	@echo "... src/readMnist.s"
 .PHONY : help
 
 

@@ -5,8 +5,9 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
   "/home/wjf/Desktop/multi_thread_torch/example.cpp" "/home/wjf/Desktop/multi_thread_torch/build/CMakeFiles/example.dir/example.cpp.o"
-  "/home/wjf/Desktop/multi_thread_torch/gradComputation.cpp" "/home/wjf/Desktop/multi_thread_torch/build/CMakeFiles/example.dir/gradComputation.cpp.o"
-  "/home/wjf/Desktop/multi_thread_torch/paillier.cpp" "/home/wjf/Desktop/multi_thread_torch/build/CMakeFiles/example.dir/paillier.cpp.o"
+  "/home/wjf/Desktop/multi_thread_torch/src/gradComputation.cpp" "/home/wjf/Desktop/multi_thread_torch/build/CMakeFiles/example.dir/src/gradComputation.cpp.o"
+  "/home/wjf/Desktop/multi_thread_torch/src/paillier.cpp" "/home/wjf/Desktop/multi_thread_torch/build/CMakeFiles/example.dir/src/paillier.cpp.o"
+  "/home/wjf/Desktop/multi_thread_torch/src/readMnist.cpp" "/home/wjf/Desktop/multi_thread_torch/build/CMakeFiles/example.dir/src/readMnist.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
@@ -21,6 +22,7 @@ set(CMAKE_TARGET_DEFINITIONS_CXX
 
 # The include file search paths:
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
+  ".././include"
   "/home/wjf/libtorch/include"
   "/home/wjf/libtorch/include/torch/csrc/api/include"
   "/usr/local/cuda-11.4/include"
