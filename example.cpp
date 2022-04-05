@@ -1,4 +1,3 @@
-#include <torch/torch.h>
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -9,6 +8,7 @@
 #include <chrono>
 #include <thread>
 #include <readMnist.h>
+#include <modelCreation.h>
 #include "hard_api/include/hard_api.h"
 
 using namespace std;
@@ -24,9 +24,6 @@ int main()
     // 硬件初始化
     auto fpga = hard::Hard();
 
-    // Set a graph of no grad
-    torch::NoGradGuard no_grad;
-
     // 系统初始化
     GenKey(1024, n, g, lambda, mu, nsquare);
     R = GenRandomPrime(512);
@@ -34,23 +31,27 @@ int main()
     // 写参数
     /* 文件结构
      * code here
-    */
+     */
 
     mpz_class mask;
     Encryption(mask, R);
     double lr = 0.01;
     std::ofstream sfile("../trainLog.txt", ios::out);
-    
 
-    // Create Nets of PartyA and PartyB.
-    // 自定义初始化模型
-    auto PartyA = std::make_shared<Net>();
-    auto PartyB = std::make_shared<Net>();
-    std::vector<float> weightA(PartyA->fc1->weight.data_ptr<float>(), PartyA->fc1->weight.data_ptr<float>() + PartyA->fc1->weight.numel());
-    std::vector<float> biasA(PartyA->fc1->bias.data_ptr<float>(), PartyA->fc1->bias.data_ptr<float>() + PartyA->fc1->bias.numel());
-    std::vector<float> weightB(PartyB->fc1->weight.data_ptr<float>(), PartyB->fc1->weight.data_ptr<float>() + PartyB->fc1->weight.numel());
-    std::vector<float> biasB(PartyB->fc1->bias.data_ptr<float>(), PartyB->fc1->bias.data_ptr<float>() + PartyB->fc1->bias.numel());
-    
+    // 加载模型
+    string addr1 = "../parameters/weightA.dat";
+    string addr2 = "../parameters/biasA.dat";
+    string addr3 = "../parameters/weightB.dat";
+    string addr4 = "../parameters/biasB.dat";
+    vector<float> weightA(784 * 2);
+    vector<float> biasA(2);
+    vector<float> weightB(784 * 2);
+    vector<float> biasB(2);
+    loadModel<float>(addr1, weightA);
+    loadModel<float>(addr2, biasA);
+    loadModel<float>(addr3, weightB);
+    loadModel<float>(addr4, biasB);
+
     // 加载并预处理图片和标签
     const string labelDir = "../data/train-labels-idx1-ubyte";
     const string imageDir = "../data/train-images-idx3-ubyte";
@@ -61,7 +62,6 @@ int main()
     vector<vector<long>> newLabels(labels.size(), vector<long>(2, 0));
     processMnistLabeltoOddandEven(newLabels, labels);
     normalizeMnistImage(images);
-    
 
     // 开始训练
     for (size_t epoch = 1; epoch <= 1; ++epoch)
@@ -83,7 +83,7 @@ int main()
             {
                 prediction[i] = 0.5 * fc_outA[i] + 0.5 * fc_outB[i];
             }
-            
+
             // 计算loss
             float loss = myCrossEntropyLoss(prediction, labels[batchIndex]);
             lossSum += loss;
@@ -215,10 +215,10 @@ int main()
             mySGDUpdateBias(biasB, v_gradBias_B, lr);
 
             // Output the loss and checkpoint every 100 batches.
-            if ((batchIndex+1) % 2 == 0)
+            if ((batchIndex + 1) % 2 == 0)
             {
                 sfile << "Epoch: " << epoch << " | Batch: " << batchIndex + 1
-                      << " | Average Loss: " << lossSum / (batchIndex+1) << std::endl;
+                      << " | Average Loss: " << lossSum / (batchIndex + 1) << std::endl;
             }
         }
     }
