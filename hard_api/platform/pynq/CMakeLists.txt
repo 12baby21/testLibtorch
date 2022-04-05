@@ -1,0 +1,1 @@
+add_library(pynq_api SHARED pynq_api.c)

@@ -9,11 +9,11 @@
 #include <chrono>
 #include <thread>
 #include <readMnist.h>
+#include "hard_api/include/hard_api.h"
 
 using namespace std;
 using namespace torch::autograd;
 using namespace std::chrono;
-#define mnist torch::data::datasets::MNIST
 
 // global variables
 mpz_class n, g, lambda, mu, nsquare;
@@ -21,16 +21,26 @@ mpz_class R;
 
 int main()
 {
+    // 硬件初始化
+    auto fpga = hard::Hard();
+
     // Set a graph of no grad
     torch::NoGradGuard no_grad;
 
     // 系统初始化
     GenKey(1024, n, g, lambda, mu, nsquare);
     R = GenRandomPrime(512);
+
+    // 写参数
+    /* 文件结构
+     * code here
+    */
+
     mpz_class mask;
     Encryption(mask, R);
     double lr = 0.01;
     std::ofstream sfile("../trainLog.txt", ios::out);
+    
 
     // Create Nets of PartyA and PartyB.
     // 自定义初始化模型
@@ -52,9 +62,6 @@ int main()
     processMnistLabeltoOddandEven(newLabels, labels);
     normalizeMnistImage(images);
     
-
-    // Options
-    at::TensorOptions opts = at::TensorOptions().dtype(torch::kFloat32);
 
     // 开始训练
     for (size_t epoch = 1; epoch <= 1; ++epoch)
@@ -105,7 +112,8 @@ int main()
             std::vector<mpz_class> enDiff = {enDiff_0, enDiff_1};
             for (int i = 0; i < enDiff.size(); ++i)
             {
-                Encryption(enDiff[i], enDiff[i]);
+                // Encryption(enDiff[i], enDiff[i]);
+                enDiff[i] = fpga.encrypt(enDiff[i]);
             }
             auto end_time = system_clock::now();
             auto duration = duration_cast<microseconds>(end_time - start_time);
@@ -166,7 +174,8 @@ int main()
             }
             for (int i = 0; i < row; ++i)
             {
-                Decryption(decrypt_gradBias_B[i], encrypt_gradBias_B[i]);
+                // Decryption(decrypt_gradBias_B[i], encrypt_gradBias_B[i]);
+                decrypt_gradBias_B[i] = fpga.decrypt(encrypt_gradBias_B[i]);
             }
             end_time = system_clock::now();
             duration = duration_cast<microseconds>(end_time - start_time);

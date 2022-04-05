@@ -5,6 +5,7 @@ project(example LANGUAGES CXX)
 set(Torch_DIR /home/wjf/libtorch/share/cmake/Torch)
 find_package(Torch REQUIRED)
 
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 # Disable C++ extensions
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -15,10 +16,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 aux_source_directory(./src SOURCE_DIR)
 add_executable(example example.cpp ${SOURCE_DIR})
 include_directories(./include)
+add_subdirectory(hard_api)
+
 
 # link libtorch .a .so
 target_link_libraries(example "${TORCH_LIBRARIES}")
 target_link_libraries(example gmp)
+target_link_libraries(example hard_api)
 
 #
 set_property(TARGET example PROPERTY CXX_STANDARD 14)

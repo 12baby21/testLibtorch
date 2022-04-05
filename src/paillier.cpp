@@ -6,12 +6,14 @@
 #include <gmpxx.h>
 #include <vector>
 #include <thread>
+#include "hard_api/include/hard_api.h"
 
 using namespace std;
 
 #define NUM_THREADS 8 // 线程数
 
 extern mpz_class n, g, lambda, mu, nsquare;
+extern hard::Hard fpga;
 
 mpz_class GenRandomPrime(mp_bitcnt_t bits)
 {
@@ -178,6 +180,7 @@ void multiDecryption(std::vector<mpz_class> &res, std::vector<mpz_class> &c, int
 {
     for (int i = startIndex; i < endIndex; ++i)
     {
-        Decryption(res[i], c[i]);
+        // Decryption(res[i], c[i]);
+        res[i] = fpga.decrypt(res[i]);
     }
 }
