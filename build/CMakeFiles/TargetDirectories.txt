@@ -1,3 +1,0 @@
-/home/wjf/Desktop/multi_thread_torch/build/CMakeFiles/rebuild_cache.dir
-/home/wjf/Desktop/multi_thread_torch/build/CMakeFiles/edit_cache.dir
-/home/wjf/Desktop/multi_thread_torch/build/CMakeFiles/example.dir
