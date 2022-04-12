@@ -3,30 +3,44 @@
 #include <fstream>
 #include <gmpxx.h>
 #include "util.h"
-#include "paillier.h"
 #include <ctime>
 #include <chrono>
 #include <thread>
 #include <readMnist.h>
 #include <modelCreation.h>
-#include "hard_api/include/hard_api.h"
+#include "paillier/paillier.h"
 
 using namespace std;
-using namespace torch::autograd;
 using namespace std::chrono;
 
 // global variables
-mpz_class n, g, lambda, mu, nsquare;
-mpz_class R;
+
+mpz_class GenRandomPrime(mp_bitcnt_t bits)
+{
+    clock_t time = clock();
+    mpz_class r;
+    gmp_randclass rr(gmp_randinit_default);
+    rr.seed(time);
+    r = rr.get_z_bits(1024);
+    mpz_nextprime(r.get_mpz_t(), r.get_mpz_t());
+    return r;
+}
 
 int main()
 {
-    // 硬件初始化
-    auto fpga = hard::Hard();
+    // 0 GMP | 1 PYNQ
+#if 0
+    auto pynq = hard::PynqPaillier(1024);
+    Paillier &paillier = pynq;
+#else
+    Paillier paillier = Paillier(1024);
+#endif
 
     // 系统初始化
-    GenKey(1024, n, g, lambda, mu, nsquare);
-    R = GenRandomPrime(512);
+    paillier.key_gen(1);
+
+//    paillier.key_gen(clock());
+    auto R = GenRandomPrime(512);
 
     // 写参数
     /* 文件结构
@@ -34,7 +48,8 @@ int main()
      */
 
     mpz_class mask;
-    Encryption(mask, R);
+//    Encryption(mask, R);
+    mask = paillier.encrypt(R);
     double lr = 0.01;
     std::ofstream sfile("../trainLog.txt", ios::out);
 
@@ -107,13 +122,14 @@ int main()
             auto start_time = system_clock::now();
             // 编码后的第0,1维数据
             mpz_class enDiff_0, enDiff_1;
-            Encode(enDiff_0, diff[0], 1e6);
-            Encode(enDiff_1, diff[1], 1e6);
+
+            paillier.encode(enDiff_0, diff[0], 1e6);
+            paillier.encode(enDiff_1, diff[1], 1e6);
             std::vector<mpz_class> enDiff = {enDiff_0, enDiff_1};
             for (int i = 0; i < enDiff.size(); ++i)
             {
                 // Encryption(enDiff[i], enDiff[i]);
-                enDiff[i] = fpga.encrypt(enDiff[i]);
+                enDiff[i] = paillier.encrypt(enDiff[i]);
             }
             auto end_time = system_clock::now();
             auto duration = duration_cast<microseconds>(end_time - start_time);
@@ -124,21 +140,24 @@ int main()
             std::vector<mpz_class> mpz_input(column);
             for (int i = 0; i < column; ++i)
             {
-                Encode(mpz_input[i], img[i], 1e6);
+                paillier.encode(mpz_input[i], img[i], 1e6);
             }
 
             // [weight * diff + R]
             start_time = system_clock::now();
             std::vector<mpz_class> encrypt_gradWeight_B(row * column);
-            thread p1(multiEncryptMul, std::ref(encrypt_gradWeight_B), std::ref(enDiff[0]), std::ref(mpz_input), 0, column);
-            thread p2(multiEncryptMul, std::ref(encrypt_gradWeight_B), std::ref(enDiff[1]), std::ref(mpz_input), column, row * column);
-            p1.join();
-            p2.join();
+            paillier.vector_mul(encrypt_gradWeight_B, enDiff[0], mpz_input, 0, column);
+            paillier.vector_mul(encrypt_gradWeight_B, enDiff[1], mpz_input, column, row * column);
+
+//            thread p1(&Paillier::vector_mul, &paillier, std::ref(encrypt_gradWeight_B), std::ref(enDiff[0]), std::ref(mpz_input), 0, column);
+//            thread p2(&Paillier::vector_mul, &paillier, std::ref(encrypt_gradWeight_B), std::ref(enDiff[1]), std::ref(mpz_input), column, row * column);
+//            p1.join();
+//            p2.join();
             for (int i = 0; i < row; ++i)
             {
                 for (int j = 0; j < column; ++j)
                 {
-                    EncryptAdd(encrypt_gradWeight_B[i * column + j], encrypt_gradWeight_B[i * column + j], mask);
+                    paillier.add(encrypt_gradWeight_B[i * column + j], encrypt_gradWeight_B[i * column + j], mask);
                 }
             }
             end_time = system_clock::now();
@@ -151,7 +170,7 @@ int main()
             for (int i = 0; i < row; ++i)
             {
                 encrypt_gradBias_B[i] = enDiff[i];
-                EncryptAdd(encrypt_gradBias_B[i], encrypt_gradBias_B[i], mask);
+                paillier.add(encrypt_gradBias_B[i], encrypt_gradBias_B[i], mask);
             }
             end_time = system_clock::now();
             duration = duration_cast<microseconds>(end_time - start_time);
@@ -163,19 +182,20 @@ int main()
             std::vector<mpz_class> decrypt_gradBias_B(row);
             const size_t poolSize = 8;
             const size_t chunkSize = (row * column) / poolSize;
-            vector<thread> threadsTask;
+//            vector<thread> threadsTask;
             for (int i = 0; i < poolSize; ++i)
             {
-                threadsTask.push_back(thread(multiDecryption, std::ref(decrypt_gradWeight_B), std::ref(encrypt_gradWeight_B), i * chunkSize, (i + 1) * chunkSize));
+//                threadsTask.emplace_back(&Paillier::vector_decrypt, &paillier, std::ref(decrypt_gradWeight_B), std::ref(encrypt_gradWeight_B), i * chunkSize, (i + 1) * chunkSize);
+                paillier.vector_decrypt(decrypt_gradWeight_B, encrypt_gradWeight_B, i * chunkSize, (i + 1) * chunkSize);
             }
-            for (int i = 0; i < poolSize; ++i)
-            {
-                threadsTask[i].join();
-            }
+//            for (int i = 0; i < poolSize; ++i)
+//            {
+//                threadsTask[i].join();
+//            }
             for (int i = 0; i < row; ++i)
             {
                 // Decryption(decrypt_gradBias_B[i], encrypt_gradBias_B[i]);
-                decrypt_gradBias_B[i] = fpga.decrypt(encrypt_gradBias_B[i]);
+                decrypt_gradBias_B[i] = paillier.decrypt(encrypt_gradBias_B[i]);
             }
             end_time = system_clock::now();
             duration = duration_cast<microseconds>(end_time - start_time);
@@ -189,7 +209,7 @@ int main()
                 for (int j = 0; j < column; ++j)
                 {
                     decrypt_gradWeight_B[i * column + j] = decrypt_gradWeight_B[i * column + j] - R;
-                    Decode(v_gradWeight_B[i][j], decrypt_gradWeight_B[i * column + j], true, 1e6);
+                    paillier.decode(v_gradWeight_B[i][j], decrypt_gradWeight_B[i * column + j], true, 1e6);
                 }
             }
             std::vector<float> gradWeightB(row * column);
@@ -203,7 +223,7 @@ int main()
             for (int i = 0; i < row; ++i)
             {
                 decrypt_gradBias_B[i] = decrypt_gradBias_B[i] - R;
-                Decode(v_gradBias_B[i], decrypt_gradBias_B[i], false, 1e6);
+                paillier.decode(v_gradBias_B[i], decrypt_gradBias_B[i], false, 1e6);
             }
 
             // 更新模型A

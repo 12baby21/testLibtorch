@@ -2,8 +2,8 @@
 #include <gmpxx.h>
 #include <vector>
 #include "util.h"
-#include "paillier.h"
 #include <cmath>
+
 extern mpz_t nsquare;
 extern mpz_t n;
 extern mpz_t lambda;
