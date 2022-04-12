@@ -1,6 +1,3 @@
 [submodule "hard_api"]
 	path = hard_api
 	url = https://github.com/paillier-b214/hard_api.git
-[submodule "hls"]
-	path = hls
-	url = https://github.com/paillier-b214/hls.git
